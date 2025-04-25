@@ -1,16 +1,14 @@
 import ProductModel, { IProduct } from '../models/productModel';
+import { paginate } from '../utils/pagination';
 
 // Get all products with pagination
 export const getProducts = async (page: number, limit: number) => {
-  const skip = (page - 1) * limit;
-  const products = await ProductModel.find().skip(skip).limit(limit);
-  const total = await ProductModel.countDocuments();
-  return { products, total };
+  return paginate<IProduct>(ProductModel, { page, limit }, {}, {}, 'name price images thumbnail description');
 };
 
 // Get product by ID
 export const getProductById = async (id: string): Promise<IProduct | null> => {
-  return ProductModel.findById(id);
+  return ProductModel.findById(id).lean();
 };
 
 // Create new product
@@ -21,10 +19,10 @@ export const createProduct = async (data: Partial<IProduct>): Promise<IProduct> 
 
 // Update product
 export const updateProduct = async (id: string, data: Partial<IProduct>): Promise<IProduct | null> => {
-  return ProductModel.findByIdAndUpdate(id, data, { new: true });
+  return ProductModel.findByIdAndUpdate(id, data, { new: true }).lean();
 };
 
 // Delete product
 export const deleteProduct = async (id: string): Promise<IProduct | null> => {
-  return ProductModel.findByIdAndDelete(id);
+  return ProductModel.findByIdAndDelete(id).lean();
 };
