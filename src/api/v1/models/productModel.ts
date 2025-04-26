@@ -7,7 +7,9 @@ export interface IProduct extends Document {
   images: string[];
   thumbnail?: string;
   createdAt: Date;
-  updatedAt?: Date; // Thêm để khớp timestamps
+  updatedAt?: Date;
+  stock: number;
+  categoryId: mongoose.Types.ObjectId;
 }
 
 const productSchema: Schema<IProduct> = new Schema(
@@ -16,10 +18,12 @@ const productSchema: Schema<IProduct> = new Schema(
     price: { type: Number, required: true },
     description: { type: String },
     images: { type: [String] },
+    categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+    stock: { type: Number, default: 0 },
     thumbnail: { type: String },
     createdAt: { type: Date, default: Date.now },
   },
-  { timestamps: true } // Tự động thêm createdAt, updatedAt
+  { timestamps: true }
 );
 
 const Product = mongoose.model<IProduct>('Product', productSchema, 'products');
