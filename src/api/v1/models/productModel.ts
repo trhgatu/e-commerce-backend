@@ -9,6 +9,7 @@ export interface IProduct extends Document {
   createdAt: Date;
   updatedAt?: Date;
   stock: number;
+  colorVariants: { colorId: mongoose.Types.ObjectId; stock: number }[];
   categoryId: mongoose.Types.ObjectId;
 }
 
@@ -20,6 +21,12 @@ const productSchema: Schema<IProduct> = new Schema(
     images: { type: [String] },
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     stock: { type: Number, default: 0 },
+    colorVariants: [
+      {
+        colorId: { type: Schema.Types.ObjectId, ref: 'Color', required: true },
+        stock: { type: Number, required: true, min: 0 },
+      },
+    ],
     thumbnail: { type: String },
     createdAt: { type: Date, default: Date.now },
   },
