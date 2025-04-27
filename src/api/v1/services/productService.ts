@@ -2,8 +2,19 @@ import ProductModel, { IProduct } from '../models/productModel';
 import { paginate } from '../utils/pagination';
 
 // Get all products with pagination
-export const getProducts = async (page: number, limit: number) => {
-  return paginate<IProduct>(ProductModel, { page, limit }, {}, {}, 'name price images thumbnail description');
+export const getProducts = async (
+  page: number,
+  limit: number,
+  filters: Record<string, any> = {},
+  sort: Record<string, 1 | -1> = {}
+) => {
+  return paginate<IProduct>(
+    ProductModel,
+    { page, limit },
+    filters,
+    sort,
+    'name price images thumbnail description'
+  );
 };
 
 // Get product by ID

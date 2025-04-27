@@ -25,7 +25,8 @@ const controller = {
     try {
       const product = await productService.getProductById(req.params.id);
       if (!product) {
-        return res.status(404).json({ error: 'Product not found' });
+        res.status(404).json({ error: 'Product not found' });
+        return
       }
       res.status(200).json(product);
     } catch (error) {
@@ -38,7 +39,8 @@ const controller = {
       const { name, price, description, images, thumbnail } = req.body;
 
       if (!name || !price) {
-        return res.status(400).json({ error: 'Name and price are required' });
+        res.status(400).json({ error: 'Name and price are required' });
+        return
       }
 
       const product = await productService.createProduct({ name, price, description, images, thumbnail });
@@ -53,7 +55,8 @@ const controller = {
       const { name, price, description, images, thumbnail } = req.body;
 
       if (!name || !price) {
-        return res.status(400).json({ error: 'Name and price are required' });
+        res.status(400).json({ error: 'Name and price are required' });
+        return
       }
 
       const product = await productService.updateProduct(req.params.id, {
@@ -65,7 +68,8 @@ const controller = {
       });
 
       if (!product) {
-        return res.status(404).json({ error: 'Product not found' });
+        res.status(404).json({ error: 'Product not found' });
+        return
       }
 
       res.status(200).json(product);
@@ -78,7 +82,8 @@ const controller = {
     try {
       const product = await productService.deleteProduct(req.params.id);
       if (!product) {
-        return res.status(404).json({ error: 'Product not found' });
+        res.status(404).json({ error: 'Product not found' });
+        return
       }
       res.status(204).send();
     } catch (error) {
