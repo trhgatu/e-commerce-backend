@@ -12,13 +12,16 @@ const controller = {
       const result = await productService.getProducts(page, limit);
 
       res.status(200).json({
+        success: true,
+        code: 200,
+        message: 'Products fetched successfully',
         data: result.data,
         currentPage: result.currentPage,
         totalPages: result.totalPages,
         totalItems: result.total,
       });
     } catch (error) {
-      handleError(res, error, 'Failed to fetch products');
+      handleError(res, error, 'Failed to fetch products', 400);
     }
   },
 
@@ -26,12 +29,21 @@ const controller = {
     try {
       const product = await productService.getProductById(req.params.id);
       if (!product) {
-        res.status(404).json({ error: 'Product not found' });
-        return
+        res.status(404).json({
+          success: false,
+          code: 404,
+          message: 'Product not found',
+        });
+        return;
       }
-      res.status(200).json(product);
+      res.status(200).json({
+        success: true,
+        code: 200,
+        message: 'Product fetched successfully',
+        data: product,
+      });
     } catch (error) {
-      handleError(res, error, 'Failed to fetch product');
+      handleError(res, error, 'Failed to fetch product', 400);
     }
   },
 
@@ -41,18 +53,31 @@ const controller = {
 
       if (!parsed.success) {
         res.status(400).json({
-          error: 'Validation failed',
-          details: parsed.error.errors
+          success: false,
+          code: 400,
+          message: 'Validation failed',
+          details: parsed.error.errors,
         });
         return;
       }
+
       const productData = parsed.data;
       if (!productData) {
-        res.status(400).json({ error: 'Invalid product data' });
+        res.status(400).json({
+          success: false,
+          code: 400,
+          message: 'Invalid product data',
+        });
         return;
       }
+
       const product = await productService.createProduct(productData);
-      res.status(201).json(product);
+      res.status(201).json({
+        success: true,
+        code: 201,
+        message: 'Product created successfully',
+        data: product,
+      });
     } catch (error) {
       handleError(res, error, 'Failed to create product', 400);
     }
@@ -64,8 +89,10 @@ const controller = {
 
       if (!parsed.success) {
         res.status(400).json({
-          error: 'Validation failed',
-          details: parsed.error.errors
+          success: false,
+          code: 400,
+          message: 'Validation failed',
+          details: parsed.error.errors,
         });
         return;
       }
@@ -74,11 +101,20 @@ const controller = {
       const product = await productService.updateProduct(req.params.id, productData);
 
       if (!product) {
-        res.status(404).json({ error: 'Product not found' });
+        res.status(404).json({
+          success: false,
+          code: 404,
+          message: 'Product not found',
+        });
         return;
       }
 
-      res.status(200).json(product);
+      res.status(200).json({
+        success: true,
+        code: 200,
+        message: 'Product updated successfully',
+        data: product,
+      });
     } catch (error) {
       handleError(res, error, 'Failed to update product', 400);
     }
@@ -88,12 +124,21 @@ const controller = {
     try {
       const product = await productService.deleteProduct(req.params.id);
       if (!product) {
-        res.status(404).json({ error: 'Product not found' });
-        return
+        res.status(404).json({
+          success: false,
+          code: 404,
+          message: 'Product not found',
+        });
+        return;
       }
-      res.status(204).send();
+
+      res.status(200).json({
+        success: true,
+        code: 200,
+        message: 'Product deleted successfully',
+      });
     } catch (error) {
-      handleError(res, error, 'Failed to delete product');
+      handleError(res, error, 'Failed to delete product', 400);
     }
   },
 };
