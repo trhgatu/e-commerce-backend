@@ -5,16 +5,13 @@ export interface IColor extends Document {
   name: string;
   hexCode: string;
   description?: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const colorSchema: Schema<IColor> = new Schema(
   {
     name: { type: String, required: true, unique: true },
-    hexCode: { type: String, required: true },
+    hexCode: { type: String, required: true , match: /^#([0-9A-F]{3}){1,2}$/i},
     description: { type: String },
-    createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
