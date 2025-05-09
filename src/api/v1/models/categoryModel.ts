@@ -5,8 +5,6 @@ export interface ICategory extends Document {
   parentId?: mongoose.Types.ObjectId;
   description?: string;
   icon?: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const categorySchema: Schema<ICategory> = new Schema(
@@ -15,7 +13,6 @@ const categorySchema: Schema<ICategory> = new Schema(
     parentId: { type: Schema.Types.ObjectId, ref: 'Category' },
     description: { type: String },
     icon: { type: String },
-    createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
