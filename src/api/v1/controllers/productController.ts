@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as productService from '../services/productService';
 import { handleError } from '../utils/handleError';
+import { createProductSchema } from '../validators/productValidator';
 
 const controller = {
   getAllProducts: async (req: Request, res: Response) => {
@@ -36,14 +37,20 @@ const controller = {
 
   createProduct: async (req: Request, res: Response) => {
     try {
-      const { name, price, description, images, thumbnail } = req.body;
+      const parsed = createProductSchema.safeParse(req.body);
 
-      if (!name || !price) {
-        res.status(400).json({ error: 'Name and price are required' });
-        return
+      if (!parsed.success) {
+        res.status(400).json({
+          error: 'Validation failed',
+          details: parsed.error.errors
+        })
       }
-
-      const product = await productService.createProduct({ name, price, description, images, thumbnail });
+      const productData = parsed.data;
+      if (!productData) {
+        res.status(400).json({ error: 'Invalid product data' });
+        return;
+      }
+      const product = await productService.createProduct(productData);
       res.status(201).json(product);
     } catch (error) {
       handleError(res, error, 'Failed to create product', 400);

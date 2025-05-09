@@ -22,7 +22,8 @@
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.13.3",
         "mysql2": "^3.14.0",
-        "sequelize": "^6.37.7"
+        "sequelize": "^6.37.7",
+        "zod": "^3.24.4"
     },
     "devDependencies": {
         "@types/bcrypt": "^5.0.2",
