@@ -9,7 +9,10 @@ export interface IProduct extends Document {
   thumbnail?: string;
   tags?: string[];
   stock: number;
-  colorVariants: { colorId: mongoose.Types.ObjectId; stock: number }[];
+  colorVariants: {
+    colorId: mongoose.Types.ObjectId;
+    stock: number;
+  }[];
   categoryId: mongoose.Types.ObjectId;
   brand: string;
   isFeatured: boolean;
@@ -20,35 +23,53 @@ export interface IProduct extends Document {
   updatedAt: Date;
 }
 
-const productSchema: Schema<IProduct> = new Schema(
+const productSchema = new Schema<IProduct>(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true },
-    price: { type: Number, required: true },
-    description: { type: String },
+    price: { type: Number, required: true, min: 0 },
+    description: { type: String, trim: true },
     images: { type: [String], default: [] },
     thumbnail: { type: String },
     tags: { type: [String], default: [] },
-    stock: { type: Number, default: 0 },
+    stock: { type: Number, default: 0, min: 0 },
+
     colorVariants: [
       {
-        colorId: { type: Schema.Types.ObjectId, ref: 'Color', required: true },
-        stock: { type: Number, required: true, min: 0 },
+        colorId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Color',
+          required: true,
+        },
+        stock: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
       },
     ],
-    categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
-    brand: { type: String, required: true },
+
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Category',
+      required: true,
+    },
+
+    brand: { type: String, required: true, trim: true },
     isFeatured: { type: Boolean, default: false },
-    discountPercent: { type: Number, default: 0 },
-    rating: { type: Number, default: 0 },
-    reviewCount: { type: Number, default: 0 },
+    discountPercent: { type: Number, default: 0, min: 0, max: 100 },
+    rating: { type: Number, default: 0, min: 0, max: 5 },
+    reviewCount: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true }
 );
-
 productSchema.pre('save', function (next) {
   if (this.isModified('name') || this.isNew) {
-    this.slug = this.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+    this.slug = this.name
+      .toLowerCase()
+      .trim()
+      .replace(/ /g, '-')
+      .replace(/[^\w-]+/g, '');
   }
   next();
 });
