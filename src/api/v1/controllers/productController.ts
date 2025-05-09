@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import * as productService from '../services/productService';
 import { handleError } from '../utils/handleError';
-import { createProductSchema } from '../validators/productValidator';
+import { createProductSchema, updateProductSchema } from '../validators/productValidator';
 
 const controller = {
   getAllProducts: async (req: Request, res: Response) => {
@@ -43,7 +43,8 @@ const controller = {
         res.status(400).json({
           error: 'Validation failed',
           details: parsed.error.errors
-        })
+        });
+        return;
       }
       const productData = parsed.data;
       if (!productData) {
@@ -59,24 +60,22 @@ const controller = {
 
   updateProduct: async (req: Request, res: Response) => {
     try {
-      const { name, price, description, images, thumbnail } = req.body;
+      const parsed = updateProductSchema.safeParse(req.body);
 
-      if (!name || !price) {
-        res.status(400).json({ error: 'Name and price are required' });
-        return
+      if (!parsed.success) {
+        res.status(400).json({
+          error: 'Validation failed',
+          details: parsed.error.errors
+        });
+        return;
       }
 
-      const product = await productService.updateProduct(req.params.id, {
-        name,
-        price,
-        description,
-        images,
-        thumbnail,
-      });
+      const productData = parsed.data;
+      const product = await productService.updateProduct(req.params.id, productData);
 
       if (!product) {
         res.status(404).json({ error: 'Product not found' });
-        return
+        return;
       }
 
       res.status(200).json(product);

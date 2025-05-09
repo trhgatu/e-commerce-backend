@@ -30,3 +30,5 @@ export const createProductSchema = z.object({
   isFeatured: z.boolean().optional(),
   discountPercent: z.number().min(0).max(100).optional(),
 });
+
+export const updateProductSchema = createProductSchema.partial();
