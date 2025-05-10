@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import slugify from 'slugify';
 
 export interface IProduct extends Document {
   name: string;
@@ -14,7 +15,7 @@ export interface IProduct extends Document {
     stock: number;
   }[];
   categoryId: mongoose.Types.ObjectId;
-  brand: string;
+  brandId: mongoose.Types.ObjectId;
   isFeatured: boolean;
   discountPercent?: number;
   rating: number;
@@ -55,7 +56,7 @@ const productSchema = new Schema<IProduct>(
       required: true,
     },
 
-    brand: { type: String, required: true, trim: true },
+    brandId: { type: Schema.Types.ObjectId, ref: 'Brand', required: true },
     isFeatured: { type: Boolean, default: false },
     discountPercent: { type: Number, default: 0, min: 0, max: 100 },
     rating: { type: Number, default: 0, min: 0, max: 5 },
@@ -63,14 +64,19 @@ const productSchema = new Schema<IProduct>(
   },
   { timestamps: true }
 );
-productSchema.pre('save', function (next) {
-  if (this.isModified('name') || this.isNew) {
-    this.slug = this.name
-      .toLowerCase()
-      .trim()
-      .replace(/ /g, '-')
-      .replace(/[^\w-]+/g, '');
+
+productSchema.pre('validate', async function (next) {
+  if (!this.isModified('name') && !this.isNew) return next();
+
+  const baseSlug = slugify(this.name, { lower: true, strict: true });
+  let slug = baseSlug;
+  let count = 1;
+
+  while (await Product.exists({ slug })) {
+    slug = `${baseSlug}-${count++}`;
   }
+
+  this.slug = slug;
   next();
 });
 

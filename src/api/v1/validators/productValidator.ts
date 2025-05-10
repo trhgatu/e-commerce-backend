@@ -25,8 +25,11 @@ export const createProductSchema = z.object({
       message: 'Invalid categoryId',
     })
     .transform((val) => new mongoose.Types.ObjectId(val)),
-
-  brand: z.string(),
+  brandId: z.string()
+    .refine((id) => mongoose.Types.ObjectId.isValid(id), {
+      message: 'Invalid brandId',
+    })
+    .transform((val) => new mongoose.Types.ObjectId(val)),
   isFeatured: z.boolean().optional(),
   discountPercent: z.number().min(0).max(100).optional(),
 });
