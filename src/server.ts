@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import cors from 'cors';
 import router from './api/v1/routes';
 import cookieParser from 'cookie-parser';
+import redisClient from './config/redis';
 
 dotenv.config();
 
@@ -15,6 +16,11 @@ const port = process.env.PORT;
 const startServer = async () => {
     try {
         await connectMongoDB();
+         if (!redisClient.isOpen) {
+            await redisClient.connect();
+            console.log("✅ Connected to Redis Cloud");
+        }
+
         const corsOptions = {
             origin: "*",
             credentials: true,
