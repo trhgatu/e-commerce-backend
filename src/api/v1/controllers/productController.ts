@@ -136,6 +136,7 @@ const controller = {
         success: true,
         code: 200,
         message: 'Product deleted successfully',
+        data: product
       });
     } catch (error) {
       handleError(res, error, 'Failed to delete product', 400);
