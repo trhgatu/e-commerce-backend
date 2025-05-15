@@ -1,39 +1,87 @@
 import ProductModel, { IProduct } from '../models/productModel';
 import { paginate } from '../utils/pagination';
+import {
+  getCache,
+  setCache,
+  deleteCache,
+  deleteKeysByPattern,
+} from './redisService';
 
-// Get all products with pagination
+// Get all products with pagination + cache
 export const getProducts = async (
   page: number,
   limit: number,
   filters: Record<string, any> = {},
   sort: Record<string, 1 | -1> = {}
 ) => {
-  return paginate<IProduct>(
+  const cacheKey = `products:page=${page}:limit=${limit}:filters=${JSON.stringify(
+    filters
+  )}:sort=${JSON.stringify(sort)}`;
+
+  const cached = await getCache(cacheKey);
+  if (cached) return cached;
+
+  const result = await paginate<IProduct>(
     ProductModel,
     { page, limit },
     filters,
     sort,
     'name price images thumbnail description'
   );
+
+  await setCache(cacheKey, result, 600);
+
+  return result;
 };
 
-// Get product by ID
+// Get product by ID + cache
 export const getProductById = async (id: string): Promise<IProduct | null> => {
-  return ProductModel.findById(id).lean();
+  const cacheKey = `product:${id}`;
+
+  const cached = await getCache<IProduct>(cacheKey);
+  if (cached) return cached;
+
+  const product = await ProductModel.findById(id).lean();
+
+  if (product) {
+    await setCache(cacheKey, product, 600);
+  }
+
+  return product;
 };
 
-// Create new product
-export const createProduct = async (data: Partial<IProduct>): Promise<IProduct> => {
+export const createProduct = async (
+  data: Partial<IProduct>
+): Promise<IProduct> => {
   const product = new ProductModel(data);
-  return product.save();
+  const saved = await product.save();
+
+  await deleteKeysByPattern('products:*');
+
+  return saved;
 };
 
-// Update product
-export const updateProduct = async (id: string, data: Partial<IProduct>): Promise<IProduct | null> => {
-  return ProductModel.findByIdAndUpdate(id, data, { new: true }).lean();
+// Update product + invalidate cả danh sách & chi tiết
+export const updateProduct = async (
+  id: string,
+  data: Partial<IProduct>
+): Promise<IProduct | null> => {
+  const updated = await ProductModel.findByIdAndUpdate(id, data, {
+    new: true,
+  }).lean();
+
+  await deleteCache(`product:${id}`);
+  await deleteKeysByPattern('products:*');
+
+  return updated;
 };
 
-// Delete product
+// Delete product + invalidate cả danh sách & chi tiết
 export const deleteProduct = async (id: string): Promise<IProduct | null> => {
-  return ProductModel.findByIdAndDelete(id).lean();
+  const deleted = await ProductModel.findByIdAndDelete(id).lean();
+
+  await deleteCache(`product:${id}`);
+  await deleteKeysByPattern('products:*');
+
+  return deleted;
 };
