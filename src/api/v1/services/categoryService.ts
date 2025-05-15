@@ -1,5 +1,6 @@
 import CategoryModel, { ICategory } from '../models/categoryModel';
 import { paginate } from '../utils/pagination';
+import { setCache, getCache, deleteCache, deleteKeysByPattern } from './redisService';
 
 export const getCategories = async (
     page: number,
@@ -7,44 +8,85 @@ export const getCategories = async (
     filters: Record<string, any> = {},
     sort: Record<string, 1 | -1> = {}
 ) => {
-    return paginate<ICategory>(
+    const cacheKey = `categories:page=${page}:limit=${limit}:filters=${JSON.stringify(filters)}:sort=${JSON.stringify(sort)}`;
+    const cached = await getCache(cacheKey);
+    if (cached) return cached;
+
+    const result = await paginate<ICategory>(
         CategoryModel,
         { page, limit },
         filters,
         sort,
         'name parentId description icon'
     );
+
+    await setCache(cacheKey, result, 600);
+    return result;
 };
+
 
 export const getCategoryById = async (id: string): Promise<ICategory | null> => {
-    return CategoryModel.findById(id).lean();
+    const cacheKey = `category:${id}`;
+    const cached = await getCache<ICategory>(cacheKey);
+    if (cached) return cached;
+
+    const category = await CategoryModel.findById(id).lean();
+    if (category) await setCache(cacheKey, category, 600);
+
+    return category;
 };
+
 
 export const createCategory = async (data: Partial<ICategory>): Promise<ICategory> => {
-    const category = new CategoryModel(data);
-    return category.save();
+  const category = new CategoryModel(data);
+  const saved = await category.save();
+
+  await deleteKeysByPattern('categories:*');
+  await deleteCache(`category:${saved._id}`);
+
+  return saved;
 };
+
 
 export const updateCategory = async (
-    id: string,
-    data: Partial<ICategory>
+  id: string,
+  data: Partial<ICategory>
 ): Promise<ICategory | null> => {
-    return CategoryModel.findByIdAndUpdate(id, data, { new: true }).lean();
+  const updated = await CategoryModel.findByIdAndUpdate(id, data, { new: true }).lean();
+
+  await deleteCache(`category:${id}`);
+  await deleteKeysByPattern('categories:*');
+
+  return updated;
 };
+
 
 export const deleteCategory = async (id: string): Promise<ICategory | null> => {
-    return CategoryModel.findByIdAndDelete(id).lean();
+  const deleted = await CategoryModel.findByIdAndDelete(id).lean();
+
+  await deleteCache(`category:${id}`);
+  await deleteKeysByPattern('categories:*');
+
+  return deleted;
 };
 
-export const getCategoryTree = async (): Promise<any[]> => {
-    const categories = await CategoryModel.find({ parentId: null }).populate({
-      path: 'children',
-      model: 'Category',
-      populate: {
-        path: 'children',
-        model: 'Category'
-      }
-    }).lean();
 
-    return categories;
-  };
+export const getCategoryTree = async (): Promise<any[]> => {
+  const cacheKey = `categories:tree`;
+  const cached = await getCache<any[]>(cacheKey);
+  if (cached) return cached;
+
+  const categories = await CategoryModel.find({ parentId: null }).populate({
+    path: 'children',
+    model: 'Category',
+    populate: {
+      path: 'children',
+      model: 'Category'
+    }
+  }).lean();
+
+  await setCache(cacheKey, categories, 1800);
+
+  return categories;
+};
+
