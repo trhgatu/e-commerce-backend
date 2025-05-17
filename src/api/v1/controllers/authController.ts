@@ -19,7 +19,7 @@ const controller = {
             await user.save();
 
             const token = generateJwt({ userId: user._id.toString(), email: user.email, role: user.role });
-            res.status(201).json({ token, user: { _id: user._id, email: user.email, name: user.name, role: user.role } });
+            res.status(201).json({ token, user: { _id: user._id, email: user.email, name: user.fullName, role: user.role } });
         } catch (error) {
             console.log(error)
             res.status(500).json({ error: 'Server error' });
@@ -41,7 +41,7 @@ const controller = {
             }
 
             const token = generateJwt({ userId: user._id.toString(), email: user.email, role: user.role });
-            res.json({ token, user: { _id: user._id, email: user.email, name: user.name, role: user.role } });
+            res.json({ token, user: { _id: user._id, email: user.email, name: user.fullName, role: user.role } });
         } catch (error) {
             res.status(500).json({ error: 'Server error' });
         }
