@@ -4,9 +4,9 @@ export const getCache = async <T = any>(key: string): Promise<T | null> => {
   try {
     const cached = await redisClient.get(key);
     if (cached) {
-      console.log(`✅ [REDIS HIT] ${key}`);
+      console.log(`[REDIS HIT] ${key}`);
     } else {
-      console.log(`🚫 [REDIS MISS] ${key}`);
+      console.log(`[REDIS MISS] ${key}`);
     }
     return cached ? JSON.parse(cached) : null;
   } catch (err) {
@@ -18,12 +18,12 @@ export const getCache = async <T = any>(key: string): Promise<T | null> => {
 export const setCache = async (
   key: string,
   data: any,
-  ttlSeconds = 600 // mặc định 10 phút
+  ttlSeconds = 600
 ): Promise<void> => {
   try {
     await redisClient.setEx(key, ttlSeconds, JSON.stringify(data));
   } catch (err) {
-    console.error(`❌ Redis set error (key: ${key})`, err);
+    console.error(`Redis set error (key: ${key})`, err);
   }
 };
 
@@ -31,7 +31,7 @@ export const deleteCache = async (key: string): Promise<void> => {
   try {
     await redisClient.del(key);
   } catch (err) {
-    console.error(`❌ Redis delete error (key: ${key})`, err);
+    console.error(`Redis delete error (key: ${key})`, err);
   }
 };
 
@@ -42,6 +42,6 @@ export const deleteKeysByPattern = async (pattern: string): Promise<void> => {
       await redisClient.del(keys);
     }
   } catch (err) {
-    console.error(`❌ Redis pattern delete error (${pattern})`, err);
+    console.error(`Redis pattern delete error (${pattern})`, err);
   }
 };

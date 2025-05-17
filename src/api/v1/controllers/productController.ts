@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as productService from '../services/productService';
-import { handleError } from '../utils/handleError';
+import { handleError, returnZodError } from '../utils';
 import { createProductSchema, updateProductSchema } from '../validators/productValidator';
 
 const controller = {
@@ -52,26 +52,10 @@ const controller = {
       const parsed = createProductSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        res.status(400).json({
-          success: false,
-          code: 400,
-          message: 'Validation failed',
-          details: parsed.error.errors,
-        });
-        return;
+        returnZodError(res, parsed.error);
+        return
       }
-
-      const productData = parsed.data;
-      if (!productData) {
-        res.status(400).json({
-          success: false,
-          code: 400,
-          message: 'Invalid product data',
-        });
-        return;
-      }
-
-      const product = await productService.createProduct(productData);
+      const product = await productService.createProduct(parsed.data);
       res.status(201).json({
         success: true,
         code: 201,

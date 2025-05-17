@@ -4,7 +4,7 @@ import { connectMongoDB } from './config/database';
 import dotenv from 'dotenv';
 import bodyParser from "body-parser";
 import cors from 'cors';
-import router from './api/v1/routes';
+import applyRoutes from './api/v1/routes';
 import cookieParser from 'cookie-parser';
 import redisClient from './config/redis';
 
@@ -31,7 +31,7 @@ const startServer = async () => {
         app.use(express.json());
         app.use(cookieParser());
 
-        router(app);
+        applyRoutes(app);
 
         const httpServer = createServer(app);
 

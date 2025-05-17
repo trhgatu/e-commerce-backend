@@ -1,5 +1,6 @@
 import BrandModel, { IBrand } from '../models/brandModel';
 import { paginate } from '../utils/pagination';
+import { deleteCache, deleteKeysByPattern, getCache, setCache } from './redisService';
 
 export const getBrands = async (
   page: number,
@@ -7,31 +8,58 @@ export const getBrands = async (
   filters: Record<string, any> = {},
   sort: Record<string, 1 | -1> = {}
 ) => {
-  return paginate<IBrand>(
+  const cacheKey = `brands:page=${page}:limit=${limit}:filters=${JSON.stringify(filters)}:sort=${JSON.stringify(sort)}`;
+  const cached = await getCache(cacheKey);
+  if (cached) return cached;
+  const result = await paginate<IBrand>(
     BrandModel,
     { page, limit },
     filters,
     sort,
     'name slug description logo'
   );
+
+  await setCache(cacheKey, result, 600);
+  return result;
 };
 
 export const getBrandById = async (id: string): Promise<IBrand | null> => {
-  return BrandModel.findById(id).lean();
+  const cacheKey = `brand:${id}`;
+  const cached = await getCache<IBrand>(cacheKey);
+  if (cached) return cached;
+
+  const brand = await BrandModel.findById(id).lean();
+  if (brand) await setCache(cacheKey, brand, 600);
+
+  return brand;
 };
 
 export const createBrand = async (data: Partial<IBrand>): Promise<IBrand> => {
   const brand = new BrandModel(data);
-  return brand.save();
+  const saved = await brand.save();
+
+  await deleteKeysByPattern('brands:*');
+  await deleteCache(`brand:${saved._id}`);
+  return saved;
 };
 
 export const updateBrand = async (
   id: string,
   data: Partial<IBrand>
 ): Promise<IBrand | null> => {
-  return BrandModel.findByIdAndUpdate(id, data, { new: true }).lean();
+  const updated = await BrandModel.findByIdAndUpdate(id, data, { new: true }).lean();
+
+  await deleteCache(`brand:${id}`);
+  await deleteKeysByPattern('brands:*');
+
+  return updated;
 };
 
 export const deleteBrand = async (id: string): Promise<IBrand | null> => {
-  return BrandModel.findByIdAndDelete(id).lean();
+  const deleted = await BrandModel.findByIdAndDelete(id).lean();
+
+  await deleteCache(`brand:${id}`);
+  await deleteKeysByPattern('brands:*');
+
+  return deleted;
 };
