@@ -5,7 +5,7 @@ import { generateJwt } from "../utils/jwt";
 
 const controller = {
     register: async (req: Request, res: Response) => {
-        const { email, password, name } = req.body;
+        const { email, password, fullName } = req.body;
 
         try {
             const existingUser = await User.findOne({ email });
@@ -15,7 +15,7 @@ const controller = {
             }
 
             const hashedPassword = await bcrypt.hash(password, 10);
-            const user = new User({ email, password: hashedPassword, name });
+            const user = new User({ email, password: hashedPassword, fullName });
             await user.save();
 
             const token = generateJwt({ userId: user._id.toString(), email: user.email, role: user.role });
@@ -26,24 +26,40 @@ const controller = {
         }
     },
     login: async (req: Request, res: Response) => {
-        const { email, password } = req.body;
+        const { identifier, password } = req.body;
         try {
-            const user = await User.findOne({ email });
+            const user = await User.findOne({
+                $or: [{ email: identifier }, { username: identifier }]
+            });
+
             if (!user) {
-                res.status(401).json({ error: 'Invalid email or password' });
-                return;
+                return res.status(401).json({ error: 'Invalid email/username or password' });
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
-                res.status(401).json({ error: 'Invalid email or password' });
-                return;
+                return res.status(401).json({ error: 'Invalid email/username or password' });
             }
 
-            const token = generateJwt({ userId: user._id.toString(), email: user.email, role: user.role });
-            res.json({ token, user: { _id: user._id, email: user.email, name: user.fullName, role: user.role } });
+            const token = generateJwt({
+                userId: user._id.toString(),
+                email: user.email,
+                role: user.role
+            });
+
+            return res.json({
+                token,
+                user: {
+                    _id: user._id,
+                    email: user.email,
+                    username: user.username,
+                    fullName: user.fullName,
+                    role: user.role
+                }
+            });
         } catch (error) {
-            res.status(500).json({ error: 'Server error' });
+            console.error('Login error:', error);
+            return res.status(500).json({ error: 'Server error' });
         }
     }
 
