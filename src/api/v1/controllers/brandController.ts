@@ -52,19 +52,7 @@ const controller = {
     // Create new brand
     createBrand: async (req: Request, res: Response) => {
         try {
-            const parsed = createBrandSchema.safeParse(req.body);
-
-            if (!parsed.success) {
-                res.status(400).json({
-                    success: false,
-                    code: 400,
-                    message: 'Validation failed',
-                    details: parsed.error.errors,
-                });
-                return;
-            }
-
-            const brandData = parsed.data;
+            const brandData = req.body;
             const brand = await brandService.createBrand(brandData);
 
             res.status(201).json({
@@ -81,19 +69,7 @@ const controller = {
     // Update brand
     updateBrand: async (req: Request, res: Response) => {
         try {
-            const parsed = updateBrandSchema.safeParse(req.body);
-
-            if (!parsed.success) {
-                res.status(400).json({
-                    success: false,
-                    code: 400,
-                    message: 'Validation failed',
-                    details: parsed.error.errors,
-                });
-                return;
-            }
-
-            const brandData = parsed.data;
+            const brandData = req.body;
             const brand = await brandService.updateBrand(req.params.id, brandData);
 
             if (!brand) {

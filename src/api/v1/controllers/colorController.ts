@@ -49,7 +49,6 @@ const controller = {
         }
     },
 
-
     createColor: async (req: Request, res: Response) => {
         try {
             const colorData = req.body;

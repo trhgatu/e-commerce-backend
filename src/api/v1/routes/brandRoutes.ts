@@ -1,5 +1,7 @@
 import express from 'express';
 import controller from '../controllers/brandController';
+import { validate } from '../middlewares/validateMiddleware';
+import { createColorSchema, updateColorSchema } from '../validators/colorValidator';
 
 const router = express.Router();
 
@@ -10,10 +12,10 @@ router.get('/', controller.getAllBrands);
 router.get('/:id', controller.getBrandById);
 
 // POST /api/v1/categories - Create new category
-router.post('/create', controller.createBrand);
+router.post('/create', validate(createColorSchema), controller.createBrand);
 
 // PUT /api/v1/categories/:id - Update category
-router.put('/update/:id', controller.updateBrand);
+router.put('/update/:id', validate(updateColorSchema), controller.updateBrand);
 
 // DELETE /api/v1/categories/:id - Delete category
 router.delete('/delete/:id', controller.deleteBrand);

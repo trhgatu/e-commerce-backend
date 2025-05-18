@@ -64,19 +64,7 @@ const controller = {
 
   updateProduct: async (req: Request, res: Response) => {
     try {
-      const parsed = updateProductSchema.safeParse(req.body);
-
-      if (!parsed.success) {
-        res.status(400).json({
-          success: false,
-          code: 400,
-          message: 'Validation failed',
-          details: parsed.error.errors,
-        });
-        return;
-      }
-
-      const productData = parsed.data;
+      const productData = req.body;
       const product = await productService.updateProduct(req.params.id, productData);
 
       if (!product) {
