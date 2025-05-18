@@ -74,19 +74,7 @@ const controller = {
   // Update category
   updateCategory: async (req: Request, res: Response) => {
     try {
-      const parsed = updateCategorySchema.safeParse(req.body);
-
-      if (!parsed.success) {
-        res.status(400).json({
-          success: false,
-          code: 400,
-          message: 'Validation failed',
-          details: parsed.error.errors,
-        });
-        return;
-      }
-
-      const categoryData = parsed.data;
+      const categoryData = req.body;
       const category = await categoryService.updateCategory(req.params.id, categoryData);
 
       if (!category) {

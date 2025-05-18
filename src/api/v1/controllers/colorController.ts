@@ -52,19 +52,7 @@ const controller = {
 
     createColor: async (req: Request, res: Response) => {
         try {
-            const parsed = createColorSchema.safeParse(req.body);
-
-            if (!parsed.success) {
-                res.status(400).json({
-                    success: false,
-                    code: 400,
-                    message: 'Validation failed',
-                    details: parsed.error.errors,
-                });
-                return;
-            }
-
-            const colorData = parsed.data;
+            const colorData = req.body;
             const color = await colorService.createColor(colorData);
 
             res.status(201).json({
@@ -81,19 +69,7 @@ const controller = {
     // Update brand
     updateColor: async (req: Request, res: Response) => {
         try {
-            const parsed = updateColorSchema.safeParse(req.body);
-
-            if (!parsed.success) {
-                res.status(400).json({
-                    success: false,
-                    code: 400,
-                    message: 'Validation failed',
-                    details: parsed.error.errors,
-                });
-                return;
-            }
-
-            const colorData = parsed.data;
+            const colorData = req.body;
             const color = await colorService.updateColor(req.params.id, colorData);
 
             if (!color) {
@@ -160,25 +136,25 @@ const controller = {
     },
     restoreColor: async (req: Request, res: Response) => {
         try {
-          const color = await colorService.restoreColor(req.params.id);
-          if (!color) {
-            res.status(404).json({
-              success: false,
-              code: 404,
-              message: 'Color not found',
-            });
-            return;
-          }
+            const color = await colorService.restoreColor(req.params.id);
+            if (!color) {
+                res.status(404).json({
+                    success: false,
+                    code: 404,
+                    message: 'Color not found',
+                });
+                return;
+            }
 
-          res.status(200).json({
-            success: true,
-            code: 200,
-            message: 'Color restored successfully',
-          });
+            res.status(200).json({
+                success: true,
+                code: 200,
+                message: 'Color restored successfully',
+            });
         } catch (error) {
-          handleError(res, error, 'Failed to delete color', 400);
+            handleError(res, error, 'Failed to delete color', 400);
         }
-      }
+    }
 };
 
 export default controller;

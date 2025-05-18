@@ -49,13 +49,8 @@ const controller = {
 
   createProduct: async (req: Request, res: Response) => {
     try {
-      const parsed = createProductSchema.safeParse(req.body);
-
-      if (!parsed.success) {
-        returnZodError(res, parsed.error);
-        return
-      }
-      const product = await productService.createProduct(parsed.data);
+      const productData = req.body;
+      const product = await productService.createProduct(productData);
       res.status(201).json({
         success: true,
         code: 201,
