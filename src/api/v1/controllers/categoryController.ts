@@ -52,33 +52,14 @@ const controller = {
   // Create new category
   createCategory: async (req: Request, res: Response) => {
     try {
-      const parsed = createCategorySchema.safeParse(req.body);
+      const categoryData = req.body;
 
-      if (!parsed.success) {
-        res.status(400).json({
-          success: false,
-          code: 400,
-          message: 'Validation failed',
-          details: parsed.error.errors,
-        });
-        return;
-      }
-
-      const categoryData = parsed.data;
-      if (!categoryData) {
-        res.status(400).json({
-          success: false,
-          code: 400,
-          message: 'Invalid category data',
-        });
-        return;
-      }
-      if(!categoryData.parentId){
+      if (!categoryData.parentId) {
         categoryData.parentId = null;
-
       }
 
       const category = await categoryService.createCategory(categoryData);
+
       res.status(201).json({
         success: true,
         code: 201,
@@ -86,7 +67,6 @@ const controller = {
         data: category,
       });
     } catch (error) {
-        console.log(error)
       handleError(res, error, 'Failed to create category', 400);
     }
   },

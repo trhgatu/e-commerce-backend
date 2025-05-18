@@ -2,9 +2,10 @@ import { Express } from "express";
 import productRoutes from "./productRoutes";
 import authRoutes from "./authRoutes";
 import userRoutes from "./userRoutes";
-import categoryRoutes from "./categoryRoutes"
+import categoryRoutes from "./categoryRoutes";
 import brandRoutes from "./brandRoutes";
-import colorRoutes from "./colorRoutes"
+import colorRoutes from "./colorRoutes";
+import cartRoutes from "./cartRoutes";
 
 const router = (app: Express) => {
     const version = "/api/v1";
@@ -14,6 +15,7 @@ const router = (app: Express) => {
     app.use(version + "/categories", categoryRoutes);
     app.use(version + "/brands", brandRoutes)
     app.use(version + "/colors", colorRoutes)
+    app.use(version + "/carts", cartRoutes)
 };
 
 export default router;

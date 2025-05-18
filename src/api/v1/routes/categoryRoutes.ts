@@ -1,21 +1,18 @@
 import express from 'express';
 import controller from '../controllers/categoryController';
+import { validate } from '../middlewares/validateMiddleware';
+import { createCategorySchema, updateCategorySchema } from '../validators/categoryValidator';
 
 const router = express.Router();
 
-// GET /api/v1/categories - Get all categories with pagination
 router.get('/', controller.getAllCategories);
 
-// GET /api/v1/categories/:id - Get category by ID
 router.get('/:id', controller.getCategoryById);
 
-// POST /api/v1/categories - Create new category
-router.post('/create', controller.createCategory);
+router.post('/create', validate(createCategorySchema), controller.createCategory);
 
-// PUT /api/v1/categories/:id - Update category
-router.put('/update/:id', controller.updateCategory);
+router.put('/update/:id', validate(updateCategorySchema), controller.updateCategory);
 
-// DELETE /api/v1/categories/:id - Delete category
 router.delete('/delete/:id', controller.deleteCategory);
 
 export default router;
