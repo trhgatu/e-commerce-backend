@@ -2,7 +2,7 @@ import UserModel, { IUser } from '../models/userModel';
 import { paginate } from '../utils/pagination';
 import { getCache, setCache, deleteCache, deleteKeysByPattern } from './redisService';
 
-export const getUsers = async (
+export const getAllUsers = async (
   page: number,
   limit: number,
   filters: Record<string, any> = {},

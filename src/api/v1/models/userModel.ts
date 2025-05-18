@@ -1,6 +1,5 @@
 // src/models/User.ts
 import mongoose, { Schema, Document } from 'mongoose';
-import { boolean } from 'zod';
 
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;

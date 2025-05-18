@@ -5,6 +5,26 @@ import { createUserSchema, updateUserSchema } from '../validators/userValidator'
 import { handleError } from '../utils';
 
 const controller = {
+  getAllUsers: async (req: Request, res: Response) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const result = await userService.getAllUsers(page, limit);
+
+      res.status(200).json({
+        success: true,
+        code: 200,
+        message: 'Users fetched successfully',
+        data: result.data,
+        currentPage: result.currentPage,
+        totalPages: result.totalPages,
+        totalItems: result.total,
+      });
+    } catch (error) {
+      handleError(res, error, 'Failed to fetch users', 400);
+    }
+  },
   //Can sua
   getCurrentUser: async (req: Request, res: Response) => {
     try {
@@ -31,7 +51,7 @@ const controller = {
     }
   },
   getUserById: async (req: Request, res: Response) => {
-try {
+    try {
       const user = await userService.getUserById(req.params.id);
       if (!user) {
         res.status(404).json({
@@ -143,7 +163,7 @@ try {
       handleError(res, error, 'Failed to delete user', 400);
     }
   },
-  softDeleteUser : async (req: Request, res: Response) => {
+  softDeleteUser: async (req: Request, res: Response) => {
     try {
       const user = await userService.softDeleteUser(req.params.id);
       if (!user) {
