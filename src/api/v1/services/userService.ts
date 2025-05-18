@@ -28,6 +28,16 @@ export const getUserById = async (id: string): Promise<IUser | null> => {
   return user;
 };
 
+export const createUser = async (
+  data: Partial<IUser>
+): Promise<IUser> => {
+  const user = new UserModel(data);
+  const saved = await user.save();
+
+  await deleteKeysByPattern('users:*');
+  return saved;
+};
+
 export const updateUser = async (
   id: string,
   data: Partial<IUser>

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
-export const createCategorySchema = z.object({
+export const baseCategorySchema = z.object({
   name: z.string().min(3, 'Category name must be at least 3 characters long').max(255, 'Category name must not exceed 255 characters'),
 
   parentId: z.string()
@@ -15,4 +15,6 @@ export const createCategorySchema = z.object({
   icon: z.string().optional(),
 });
 
-export const updateCategorySchema = createCategorySchema.partial();
+export const updateCategorySchema = baseCategorySchema.partial();
+
+export const createCategorySchema = baseCategorySchema.partial();
