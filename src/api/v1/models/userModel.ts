@@ -1,5 +1,6 @@
 // src/models/User.ts
 import mongoose, { Schema, Document } from 'mongoose';
+import { boolean } from 'zod';
 
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;
@@ -22,7 +23,7 @@ export interface IUser extends Document {
 
   membershipRankId?: mongoose.Types.ObjectId;
   rewardPoints: number;
-
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -48,6 +49,7 @@ const userSchema: Schema<IUser> = new Schema(
 
     membershipRankId: { type: mongoose.Schema.Types.ObjectId, ref: 'Rank' },
     rewardPoints: { type: Number, default: 0 },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

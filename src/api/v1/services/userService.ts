@@ -54,7 +54,7 @@ export const updateUser = async (
   return updated;
 };
 
-export const deleteUser = async (id: string): Promise<IUser | null> => {
+export const hardDeleteUser = async (id: string): Promise<IUser | null> => {
   const deleted = await UserModel.findByIdAndDelete(id).select('-password').lean();
 
   if (deleted) {
@@ -64,3 +64,21 @@ export const deleteUser = async (id: string): Promise<IUser | null> => {
 
   return deleted;
 };
+
+
+export const softDeleteUser = async (id: string): Promise<IUser | null> => {
+  const deleted = await UserModel.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true }
+  ).select('-password').lean();
+
+  if (deleted) {
+    await deleteCache(`user:${id}`);
+    await deleteKeysByPattern('users:*');
+  }
+
+  return deleted;
+};
+
+
