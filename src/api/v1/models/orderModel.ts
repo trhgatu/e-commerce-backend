@@ -1,10 +1,17 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IOrder extends Document {
-    userId: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
   items: { productId: mongoose.Types.ObjectId; quantity: number; price: number }[];
   total: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  paymentStatus: 'unpaid' | 'paid' | 'refunded';
+  paymentMethod: 'cod' | 'momo' | 'vnpay';
+  shippingInfo: {
+    fullName: string;
+    phone: string;
+    address: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,12 +27,30 @@ const orderSchema: Schema<IOrder> = new Schema(
       },
     ],
     total: { type: Number, required: true },
+
     status: {
       type: String,
       enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
       default: 'pending',
     },
-    createdAt: { type: Date, default: Date.now },
+
+    paymentStatus: {
+      type: String,
+      enum: ['unpaid', 'paid', 'refunded'],
+      default: 'unpaid',
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: ['cod', 'momo', 'vnpay'],
+      default: 'cod',
+    },
+
+    shippingInfo: {
+      fullName: { type: String, required: true },
+      phone: { type: String, required: true },
+      address: { type: String, required: true },
+    },
   },
   { timestamps: true }
 );
