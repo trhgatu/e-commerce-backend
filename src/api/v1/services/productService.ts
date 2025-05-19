@@ -26,7 +26,6 @@ export const getProducts = async (
     { page, limit },
     filters,
     sort,
-    'name price images thumbnail description'
   );
 
   await setCache(cacheKey, result, 600);

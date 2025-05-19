@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import * as productService from '../services/productService';
-import { handleError, returnZodError } from '../utils';
-import { createProductSchema, updateProductSchema } from '../validators/productValidator';
+import { handleError } from '../utils';
 
 const controller = {
   getAllProducts: async (req: Request, res: Response) => {
@@ -9,7 +8,12 @@ const controller = {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const result = await productService.getProducts(page, limit);
+      const result = await productService.getProducts(
+        page,
+        limit,
+        {},
+        { createdAt: -1 }
+      );
 
       res.status(200).json({
         success: true,

@@ -27,4 +27,6 @@ brandSchema.pre('validate', function (next) {
   next();
 });
 
-export default mongoose.model<IBrand>('Brand', brandSchema, 'brands');
+const Brand =  mongoose.model<IBrand>('Brand', brandSchema, 'brands');
+
+export default Brand;

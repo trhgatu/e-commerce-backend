@@ -4,7 +4,6 @@ import { handleError } from '../utils/handleError';
 import { createColorSchema, updateColorSchema } from '../validators/colorValidator';
 
 const controller = {
-    // Get all brands with pagination
     getAllColors: async (req: Request, res: Response) => {
         try {
             const page = parseInt(req.query.page as string) || 1;

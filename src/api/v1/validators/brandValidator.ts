@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
-export const createBrandSchema = z.object({
+export const baseBrandSchema = z.object({
   name: z.string().min(1, 'Brand name is required'),
-  logo: z.string().url('Logo must be a valid URL').optional(),
   description: z.string().optional(),
+  logo: z.string().url('Brand must be invalid URL').optional()
 });
 
-export const updateBrandSchema = createBrandSchema.partial();
+export const createBrandSchema = baseBrandSchema.partial();
+export const updateBrandSchema = baseBrandSchema.partial();

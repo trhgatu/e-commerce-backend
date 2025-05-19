@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import * as brandService from '../services/brandService';
 import { handleError } from '../utils/handleError';
-import { createBrandSchema, updateBrandSchema } from '../validators/brandValidator';
 
 const controller = {
     // Get all brands with pagination
@@ -53,6 +52,7 @@ const controller = {
     createBrand: async (req: Request, res: Response) => {
         try {
             const brandData = req.body;
+            console.log(brandData)
             const brand = await brandService.createBrand(brandData);
 
             res.status(201).json({
@@ -93,9 +93,30 @@ const controller = {
     },
 
     // Delete brand
-    deleteBrand: async (req: Request, res: Response) => {
+    hardDeleteBrand: async (req: Request, res: Response) => {
         try {
-            const brand = await brandService.deleteBrand(req.params.id);
+            const brand = await brandService.hardDeleteBrand(req.params.id);
+            if (!brand) {
+                res.status(404).json({
+                    success: false,
+                    code: 404,
+                    message: 'Brand not found',
+                });
+                return;
+            }
+
+            res.status(200).json({
+                success: true,
+                code: 200,
+                message: 'Brand deleted successfully',
+            });
+        } catch (error) {
+            handleError(res, error, 'Failed to delete brand', 400);
+        }
+    },
+    softDeleteBrand: async (req: Request, res: Response) => {
+        try {
+            const brand = await brandService.softDeleteBrand(req.params.id);
             if (!brand) {
                 res.status(404).json({
                     success: false,

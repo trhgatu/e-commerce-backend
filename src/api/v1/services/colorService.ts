@@ -18,7 +18,6 @@ export const getAllColors = async (
     { page, limit },
     mergedFilters,
     sort,
-    'name'
   );
 
   await setCache(cacheKey, result, 600);

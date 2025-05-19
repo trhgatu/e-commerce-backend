@@ -55,11 +55,26 @@ export const updateBrand = async (
   return updated;
 };
 
-export const deleteBrand = async (id: string): Promise<IBrand | null> => {
+export const hardDeleteBrand = async (id: string): Promise<IBrand | null> => {
   const deleted = await BrandModel.findByIdAndDelete(id).lean();
 
   await deleteCache(`brand:${id}`);
   await deleteKeysByPattern('brands:*');
+
+  return deleted;
+};
+
+export const softDeleteBrand = async (id: string): Promise<IBrand | null> => {
+  const deleted = await BrandModel.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true }
+  ).lean();
+
+  if (deleted) {
+    await deleteCache(`brand:${id}`);
+    await deleteKeysByPattern('brands:*');
+  }
 
   return deleted;
 };
