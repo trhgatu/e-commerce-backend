@@ -8,7 +8,7 @@ import {
 } from './redisService';
 
 // Get all products with pagination + cache
-export const getProducts = async (
+export const getAllProducts = async (
   page: number,
   limit: number,
   filters: Record<string, any> = {},
@@ -76,11 +76,40 @@ export const updateProduct = async (
 };
 
 // Delete product + invalidate cả danh sách & chi tiết
-export const deleteProduct = async (id: string): Promise<IProduct | null> => {
+export const hardDeleteProduct = async (id: string): Promise<IProduct | null> => {
   const deleted = await ProductModel.findByIdAndDelete(id).lean();
 
   await deleteCache(`product:${id}`);
   await deleteKeysByPattern('products:*');
 
   return deleted;
+};
+
+export const softDeleteProduct = async (id: string): Promise<IProduct | null> => {
+  const deleted = await ProductModel.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true }
+  ).lean();
+
+  if (deleted) {
+    await deleteCache(`product:${id}`);
+    await deleteKeysByPattern('products:*');
+  }
+
+  return deleted;
+};
+export const restoreProduct = async (id: string): Promise<IProduct | null> => {
+  const restored = await ProductModel.findByIdAndUpdate(
+    id,
+    { isDeleted: false },
+    { new: true }
+  ).lean();
+
+  if (restored) {
+    await deleteCache(`product:${id}`);
+    await deleteKeysByPattern('products:*');
+  }
+
+  return restored;
 };

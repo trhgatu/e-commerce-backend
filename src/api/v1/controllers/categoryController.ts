@@ -10,7 +10,12 @@ const controller = {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const result = await categoryService.getCategories(page, limit);
+      const result = await categoryService.getAllCategories(
+        page,
+        limit,
+        {},
+        { createdAt: -1 }
+      );
 
       res.status(200).json({
         success: true,

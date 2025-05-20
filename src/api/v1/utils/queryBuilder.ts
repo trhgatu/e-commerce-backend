@@ -13,8 +13,13 @@ export const buildProductQuery = (req: Request): QueryFilters => {
   const priceMax = req.query.priceMax ? parseFloat(req.query.priceMax as string) : undefined;
   const sortBy = (req.query.sortBy as string) || 'createdAt';
   const order = req.query.order === 'asc' ? 1 : -1;
+  const isDeleted = req.query.isDeleted;
 
   const filters: any = {};
+
+  if (typeof isDeleted === 'string') {
+    filters.isDeleted = isDeleted === 'true';
+  }
 
   if (search) {
     filters.name = { $regex: search, $options: 'i' };

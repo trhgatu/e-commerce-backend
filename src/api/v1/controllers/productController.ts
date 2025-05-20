@@ -1,18 +1,19 @@
 import { Request, Response } from 'express';
 import * as productService from '../services/productService';
 import { handleError } from '../utils';
+import { buildProductQuery } from '../utils';
 
 const controller = {
   getAllProducts: async (req: Request, res: Response) => {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-
-      const result = await productService.getProducts(
+      const { filters, sort } = buildProductQuery(req);
+      const result = await productService.getAllProducts(
         page,
         limit,
-        {},
-        { createdAt: -1 }
+        filters,
+        sort
       );
 
       res.status(200).json({
@@ -91,9 +92,9 @@ const controller = {
     }
   },
 
-  deleteProduct: async (req: Request, res: Response) => {
+  hardDeleteProduct: async (req: Request, res: Response) => {
     try {
-      const product = await productService.deleteProduct(req.params.id);
+      const product = await productService.hardDeleteProduct(req.params.id);
       if (!product) {
         res.status(404).json({
           success: false,
@@ -113,6 +114,48 @@ const controller = {
       handleError(res, error, 'Failed to delete product', 400);
     }
   },
+  softDeleteProduct: async (req: Request, res: Response) => {
+    try {
+      const product = await productService.softDeleteProduct(req.params.id);
+      if (!product) {
+        res.status(404).json({
+          success: false,
+          code: 404,
+          message: 'Product not found',
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        code: 200,
+        message: 'Product deleted successfully',
+      });
+    } catch (error) {
+      handleError(res, error, 'Failed to delete product', 400);
+    }
+  },
+  restoreProduct: async (req:Request, res: Response) => {
+    try {
+      const product = await productService.restoreProduct(req.params.id);
+      if (!product) {
+        res.status(404).json({
+          success: false,
+          code: 404,
+          message: 'Product not found',
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        code: 200,
+        message: 'Product restored successfully',
+      });
+    } catch (error) {
+      handleError(res, error, 'Failed to restore product', 400);
+    }
+  }
 };
 
 export default controller;

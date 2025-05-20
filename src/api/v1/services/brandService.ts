@@ -2,7 +2,7 @@ import BrandModel, { IBrand } from '../models/brandModel';
 import { paginate } from '../utils/pagination';
 import { deleteCache, deleteKeysByPattern, getCache, setCache } from './redisService';
 
-export const getBrands = async (
+export const getAllBrands = async (
   page: number,
   limit: number,
   filters: Record<string, any> = {},

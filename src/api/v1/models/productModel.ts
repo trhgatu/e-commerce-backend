@@ -20,6 +20,7 @@ export interface IProduct extends Document {
   discountPercent?: number;
   rating: number;
   reviewCount: number;
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -61,6 +62,7 @@ const productSchema = new Schema<IProduct>(
     discountPercent: { type: Number, default: 0, min: 0, max: 100 },
     rating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0, min: 0 },
+    isDeleted: {type: Boolean, default: false}
   },
   { timestamps: true }
 );

@@ -2,7 +2,7 @@ import CategoryModel, { ICategory } from '../models/categoryModel';
 import { paginate } from '../utils/pagination';
 import { setCache, getCache, deleteCache, deleteKeysByPattern } from './redisService';
 
-export const getCategories = async (
+export const getAllCategories = async (
     page: number,
     limit: number,
     filters: Record<string, any> = {},
