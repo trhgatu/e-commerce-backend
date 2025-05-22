@@ -8,6 +8,7 @@ export interface IBrand extends Document {
   logo?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  isDeleted?: boolean;
 }
 
 const brandSchema = new Schema<IBrand>(
@@ -16,6 +17,7 @@ const brandSchema = new Schema<IBrand>(
     slug: { type: String, required: true, unique: true, index: true },
     description: { type: String },
     logo: { type: String },
+    isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true }
 );
@@ -27,6 +29,6 @@ brandSchema.pre('validate', function (next) {
   next();
 });
 
-const Brand =  mongoose.model<IBrand>('Brand', brandSchema, 'brands');
+const Brand = mongoose.model<IBrand>('Brand', brandSchema, 'brands');
 
 export default Brand;

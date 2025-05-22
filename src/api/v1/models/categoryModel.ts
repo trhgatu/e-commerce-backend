@@ -7,6 +7,7 @@ export interface ICategory extends Document {
   parentId?: mongoose.Types.ObjectId | null;
   description?: string;
   icon?: string;
+  isDeleted: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -18,6 +19,7 @@ const categorySchema: Schema<ICategory> = new Schema(
     parentId: { type: Schema.Types.ObjectId, ref: 'Category', default: null },
     description: { type: String },
     icon: { type: String },
+    isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
@@ -35,4 +37,6 @@ categorySchema.pre('validate', function (next) {
   next();
 });
 
-export default mongoose.model<ICategory>('Category', categorySchema, 'categories');
+const Category = mongoose.model<ICategory>('Category', categorySchema, 'categories');
+
+export default Category

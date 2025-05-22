@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as brandService from '../services/brandService';
 import { handleError } from '../utils/handleError';
+import { buildCommonQuery } from '../utils/buildCommonQuery';
 
 const controller = {
     // Get all brands with pagination
@@ -8,12 +9,13 @@ const controller = {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
+            const {filters, sort } = buildCommonQuery(req, ["name"])
 
             const result = await brandService.getAllBrands(
                 page,
                 limit,
-                {},
-                { createdAt: -1 }
+                filters,
+                sort
             );
 
             res.status(200).json({

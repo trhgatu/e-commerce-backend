@@ -2,14 +2,15 @@ import { Request, Response } from 'express';
 import * as colorService from '../services/colorService';
 import { handleError } from '../utils/handleError';
 import { createColorSchema, updateColorSchema } from '../validators/colorValidator';
+import { buildCommonQuery } from '../utils/buildCommonQuery';
 
 const controller = {
     getAllColors: async (req: Request, res: Response) => {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
-
-            const result = await colorService.getAllColors(page, limit);
+            const { filters, sort } = buildCommonQuery(req, ["name", "hexCode"]);
+            const result = await colorService.getAllColors(page, limit, filters, sort);
 
             res.status(200).json({
                 success: true,

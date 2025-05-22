@@ -1,3 +1,5 @@
+const isDev = process.env.NODE_ENV === 'development';
+
 import ProductModel, { IProduct } from '../models/productModel';
 import { paginate } from '../utils/pagination';
 import {
@@ -7,28 +9,37 @@ import {
   deleteKeysByPattern,
 } from './redisService';
 
-// Get all products with pagination + cache
 export const getAllProducts = async (
   page: number,
   limit: number,
   filters: Record<string, any> = {},
   sort: Record<string, 1 | -1> = {}
 ) => {
+
+  const finalFilters = {
+    isDeleted: false,
+    ...filters,
+  };
+
   const cacheKey = `products:page=${page}:limit=${limit}:filters=${JSON.stringify(
-    filters
+    finalFilters
   )}:sort=${JSON.stringify(sort)}`;
 
-  const cached = await getCache(cacheKey);
-  if (cached) return cached;
+  if (!isDev) {
+    const cached = await getCache(cacheKey);
+    if (cached) return cached;
+  }
 
   const result = await paginate<IProduct>(
     ProductModel,
     { page, limit },
-    filters,
+    finalFilters,
     sort,
   );
 
-  await setCache(cacheKey, result, 600);
+  if (!isDev) {
+    await setCache(cacheKey, result, 600);
+  }
 
   return result;
 };
@@ -40,7 +51,8 @@ export const getProductById = async (id: string): Promise<IProduct | null> => {
   const cached = await getCache<IProduct>(cacheKey);
   if (cached) return cached;
 
-  const product = await ProductModel.findById(id).lean();
+  const product = await ProductModel.findById(id).populate('categoryId', 'name')
+    .populate('brandId', 'name').lean();
 
   if (product) {
     await setCache(cacheKey, product, 600);

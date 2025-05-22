@@ -17,7 +17,6 @@ export const getAllCategories = async (
         { page, limit },
         filters,
         sort,
-        'name parentId description icon'
     );
 
     await setCache(cacheKey, result, 600);
@@ -61,7 +60,7 @@ export const updateCategory = async (
 };
 
 
-export const deleteCategory = async (id: string): Promise<ICategory | null> => {
+export const hardDeleteCategory = async (id: string): Promise<ICategory | null> => {
   const deleted = await CategoryModel.findByIdAndDelete(id).lean();
 
   await deleteCache(`category:${id}`);
@@ -70,6 +69,35 @@ export const deleteCategory = async (id: string): Promise<ICategory | null> => {
   return deleted;
 };
 
+export const softDeleteCategory = async (id: string): Promise<ICategory | null> => {
+  const deleted = await CategoryModel.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true }
+  ).lean();
+
+  if (deleted) {
+    await deleteCache(`category:${id}`);
+    await deleteKeysByPattern('categories:*');
+  }
+
+  return deleted;
+};
+
+export const restoreCategory = async (id: string): Promise<ICategory | null> => {
+  const restored = await CategoryModel.findByIdAndUpdate(
+    id,
+    { isDeleted: false },
+    { new: true }
+  ).lean();
+
+  if (restored) {
+    await deleteCache(`category:${id}`);
+    await deleteKeysByPattern('categories:*');
+  }
+
+  return restored;
+};
 
 export const getCategoryTree = async (): Promise<any[]> => {
   const cacheKey = `categories:tree`;

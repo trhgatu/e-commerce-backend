@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import * as productService from '../services/productService';
 import { handleError } from '../utils';
-import { buildProductQuery } from '../utils';
+import { buildCommonQuery } from '../utils/buildCommonQuery';
 
 const controller = {
   getAllProducts: async (req: Request, res: Response) => {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const { filters, sort } = buildProductQuery(req);
+      const { filters, sort } = buildCommonQuery(req, ["name", "description"]);
       const result = await productService.getAllProducts(
         page,
         limit,

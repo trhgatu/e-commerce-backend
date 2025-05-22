@@ -15,6 +15,8 @@ router.post('/create', validate(createCategorySchema), controller.createCategory
 
 router.put('/update/:id', validate(updateCategorySchema), controller.updateCategory);
 
-router.delete('/delete/:id', controller.deleteCategory);
+router.delete('/hard-delete/:id', controller.hardDeleteCategory);
+
+router.delete('/delete/:id', controller.softDeleteCategory)
 
 export default router;

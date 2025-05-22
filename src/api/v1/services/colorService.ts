@@ -8,15 +8,14 @@ export const getAllColors = async (
   filters: Record<string, any> = {},
   sort: Record<string, 1 | -1> = {}
 ) => {
-  const mergedFilters = { ...filters, isDeleted: false };
-  const cacheKey = `colors:page=${page}:limit=${limit}:filters=${JSON.stringify(mergedFilters)}:sort=${JSON.stringify(sort)}`;
+  const cacheKey = `colors:page=${page}:limit=${limit}:filters=${JSON.stringify(filters)}:sort=${JSON.stringify(sort)}`;
   const cached = await getCache(cacheKey);
   if (cached) return cached;
 
   const result = await paginate<IColor>(
     ColorModel,
     { page, limit },
-    mergedFilters,
+    filters,
     sort,
   );
 

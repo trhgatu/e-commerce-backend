@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import * as categoryService from '../services/categoryService';
 import { handleError } from '../utils/handleError';
-import { createCategorySchema, updateCategorySchema } from '../validators/categoryValidator';
+import { buildCommonQuery } from '../utils/buildCommonQuery';
 
 const controller = {
   // Get all categories with pagination
@@ -9,12 +9,13 @@ const controller = {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const { filters, sort } = buildCommonQuery(req, ["name"]);
 
       const result = await categoryService.getAllCategories(
         page,
         limit,
-        {},
-        { createdAt: -1 }
+        filters,
+        sort
       );
 
       res.status(200).json({
@@ -103,9 +104,9 @@ const controller = {
   },
 
   // Delete category
-  deleteCategory: async (req: Request, res: Response) => {
+  hardDeleteCategory: async (req: Request, res: Response) => {
     try {
-      const category = await categoryService.deleteCategory(req.params.id);
+      const category = await categoryService.hardDeleteCategory(req.params.id);
       if (!category) {
         res.status(404).json({
           success: false,
@@ -122,6 +123,48 @@ const controller = {
       });
     } catch (error) {
       handleError(res, error, 'Failed to delete category', 400);
+    }
+  },
+  softDeleteCategory: async (req: Request, res: Response) => {
+    try {
+      const category = await categoryService.softDeleteCategory(req.params.id);
+      if (!category) {
+        res.status(404).json({
+          success: false,
+          code: 404,
+          message: 'Category not found',
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        code: 200,
+        message: 'Category deleted successfully',
+      });
+    } catch (error) {
+      handleError(res, error, 'Failed to delete category', 400);
+    }
+  },
+  restoreCategory: async (req: Request, res: Response) => {
+    try {
+      const category = await categoryService.restoreCategory(req.params.id);
+      if (!category) {
+        res.status(404).json({
+          success: false,
+          code: 404,
+          message: 'Category not found',
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        code: 200,
+        message: 'Category restored successfully',
+      });
+    } catch (error) {
+      handleError(res, error, 'Failed to restore category', 400);
     }
   },
 
