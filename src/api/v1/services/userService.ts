@@ -8,12 +8,24 @@ export const getAllUsers = async (
   filters: Record<string, any> = {},
   sort: Record<string, 1 | -1> = {}
 ) => {
+  const finalFilters: Record<string, any> = {
+    isDeleted: false,
+    ...filters,
+  };
+  const cacheKey = `users:page=${page}:limit=${limit}:filters=${JSON.stringify(
+    finalFilters
+  )}:sort=${JSON.stringify(sort)}`;
+  const cached = await getCache(cacheKey);
+  if (cached) return cached;
+
   return paginate<IUser>(
     UserModel,
     { page, limit },
-    filters,
+    finalFilters,
     sort,
-    'fullName email phone isActive role createdAt'
+    [
+      { path: "roleId", "select": "name permissions" }
+    ]
   );
 };
 

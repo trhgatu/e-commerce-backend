@@ -13,14 +13,13 @@ export const getAllProducts = async (
   page: number,
   limit: number,
   filters: Record<string, any> = {},
-  sort: Record<string, 1 | -1> = {}
+  sort: Record<string, 1 | -1> = {},
 ) => {
 
-  const finalFilters = {
+  const finalFilters: Record<string, any> = {
     isDeleted: false,
     ...filters,
   };
-
   const cacheKey = `products:page=${page}:limit=${limit}:filters=${JSON.stringify(
     finalFilters
   )}:sort=${JSON.stringify(sort)}`;
@@ -35,6 +34,11 @@ export const getAllProducts = async (
     { page, limit },
     finalFilters,
     sort,
+    [
+      { path: 'categoryId', select: 'name' },
+      { path: 'brandId', select: 'name' },
+      { path: 'colorVariants.colorId', select: 'name hexCode' },
+    ]
   );
 
   if (!isDev) {
@@ -51,8 +55,11 @@ export const getProductById = async (id: string): Promise<IProduct | null> => {
   const cached = await getCache<IProduct>(cacheKey);
   if (cached) return cached;
 
-  const product = await ProductModel.findById(id).populate('categoryId', 'name')
-    .populate('brandId', 'name').lean();
+  const product = await ProductModel.findById(id)
+    .populate('categoryId', 'name')
+    .populate('brandId', 'name')
+    .populate('colorVariants.colorId', 'name hexCode')
+    .lean();
 
   if (product) {
     await setCache(cacheKey, product, 600);
@@ -60,6 +67,7 @@ export const getProductById = async (id: string): Promise<IProduct | null> => {
 
   return product;
 };
+
 
 export const createProduct = async (
   data: Partial<IProduct>

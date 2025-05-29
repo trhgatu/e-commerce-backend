@@ -8,9 +8,15 @@ export const getAllBrands = async (
   filters: Record<string, any> = {},
   sort: Record<string, 1 | -1> = {}
 ) => {
-  const cacheKey = `brands:page=${page}:limit=${limit}:filters=${JSON.stringify(filters)}:sort=${JSON.stringify(sort)}`;
+  const finalFilters = {
+    isDeleted: false,
+    ...filters
+  }
+  const cacheKey = `brands:page=${page}:limit=${limit}:filters=${JSON.stringify(finalFilters)}:sort=${JSON.stringify(sort)}`;
   const cached = await getCache(cacheKey);
+
   if (cached) return cached;
+
   const result = await paginate<IBrand>(
     BrandModel,
     { page, limit },

@@ -3,10 +3,9 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;
-
   email: string;
   password: string;
-
+  status: 'active' | 'inactive' | 'banned';
   fullName: string;
   username: string;
   phone?: string;
@@ -14,8 +13,7 @@ export interface IUser extends Document {
   address?: string;
   gender: 'male' | 'female' | 'other';
   birthDate?: Date;
-
-  role: 'user' | 'admin';
+  roleId?: mongoose.Types.ObjectId;
   isActive: boolean;
   emailVerified: boolean;
   lastLoginAt?: Date;
@@ -37,11 +35,10 @@ const userSchema: Schema<IUser> = new Schema(
     phone: { type: String },
     avatarUrl: { type: String },
     address: { type: String },
-
+    status: { type: String, enum: ['active', 'inactive', 'banned'], default: 'active' },
     gender: { type: String, enum: ['male', 'female', 'other'], default: 'other' },
     birthDate: { type: Date },
-
-    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    roleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
     isActive: { type: Boolean, default: true },
     emailVerified: { type: Boolean, default: false },
     lastLoginAt: { type: Date },

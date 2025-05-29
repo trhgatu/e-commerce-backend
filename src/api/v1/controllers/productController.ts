@@ -13,7 +13,7 @@ const controller = {
         page,
         limit,
         filters,
-        sort
+        sort,
       );
 
       res.status(200).json({
