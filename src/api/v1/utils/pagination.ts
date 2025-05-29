@@ -32,7 +32,6 @@ export const paginate = async <T>(
       .skip(skip)
       .limit(limit);
 
-    // ✅ xử lý populate động
     if (populate) {
       if (Array.isArray(populate)) {
         populate.forEach((p) => {

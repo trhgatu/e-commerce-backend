@@ -18,8 +18,8 @@ const controller = {
             const user = new User({ email, password: hashedPassword, fullName });
             await user.save();
 
-            const token = generateJwt({ userId: user._id.toString(), email: user.email, role: user.role });
-            res.status(201).json({ token, user: { _id: user._id, email: user.email, name: user.fullName, role: user.role } });
+            const token = generateJwt({ userId: user._id.toString(), email: user.email, roleId: user.roleId ? user.roleId.toString() : undefined });
+            res.status(201).json({ token, user: { _id: user._id, email: user.email, name: user.fullName, role: user.roleId } });
         } catch (error) {
             console.log(error)
             res.status(500).json({ error: 'Server error' });
@@ -30,7 +30,7 @@ const controller = {
         try {
             const user = await User.findOne({
                 $or: [{ email: identifier }, { username: identifier }]
-            });
+            }).populate('roleId', 'name permissions');
 
             if (!user) {
                 return res.status(401).json({ error: 'Invalid email/username or password' });
@@ -44,9 +44,8 @@ const controller = {
             const token = generateJwt({
                 userId: user._id.toString(),
                 email: user.email,
-                role: user.role
+                roleId: user.roleId?._id.toString()
             });
-
             return res.json({
                 token,
                 user: {
@@ -54,7 +53,7 @@ const controller = {
                     email: user.email,
                     username: user.username,
                     fullName: user.fullName,
-                    role: user.role
+                    role: user.roleId,
                 }
             });
         } catch (error) {

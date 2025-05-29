@@ -29,7 +29,7 @@ const controller = {
   //Can sua
   getCurrentUser: async (req: Request, res: Response) => {
     try {
-      const user = await User.findById(req.user?.userId).select('-password').lean();
+      const user = await User.findById(req.user?.userId).populate("roleId", "name permissions").select('-password');
 
       if (!user) {
         res.status(404).json({ success: false, message: 'User not found' });
@@ -43,7 +43,7 @@ const controller = {
           email: user.email,
           fullName: user.fullName,
           username: user.username,
-          role: user.roleId.name
+          role: user.roleId
         }
       });
     } catch (error) {

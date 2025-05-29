@@ -18,15 +18,17 @@ export const getAllUsers = async (
   const cached = await getCache(cacheKey);
   if (cached) return cached;
 
-  return paginate<IUser>(
+  const result = await paginate<IUser>(
     UserModel,
     { page, limit },
     finalFilters,
     sort,
     [
-      { path: "roleId", "select": "name permissions" }
+      { path: "roleId", select: "name permissions" },
     ]
-  );
+  )
+  return result;
+
 };
 
 export const getUserById = async (id: string): Promise<IUser | null> => {
