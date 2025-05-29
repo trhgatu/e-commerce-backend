@@ -4,7 +4,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IRole extends Document {
     name: string;
     description?: string;
-    permissions: string[];
+    permissions: mongoose.Types.ObjectId[];
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -15,7 +15,7 @@ const roleSchema = new Schema<IRole>(
     {
         name: { type: String, required: true, unique: true },
         description: { type: String, default: '' },
-        permissions: { type: [String], default: [] },
+        permissions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Permission' }],
         isActive: { type: Boolean, default: true },
         isDeleted: { type: Boolean, default: false }
     },

@@ -43,7 +43,7 @@ const controller = {
           email: user.email,
           fullName: user.fullName,
           username: user.username,
-          role: user.roleId
+          roleId: user.roleId
         }
       });
     } catch (error) {

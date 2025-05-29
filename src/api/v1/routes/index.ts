@@ -9,6 +9,7 @@ import cartRoutes from "./cartRoutes";
 import orderRoutes from "./orderRoutes";
 import imageRoutes from "./imageRoutes"
 import roleRoutes from "./roleRoutes"
+import permissionRoutes from "./permissionRoutes";
 
 const router = (app: Express) => {
     const version = "/api/v1";
@@ -22,6 +23,7 @@ const router = (app: Express) => {
     app.use(version + "/orders", orderRoutes)
     app.use(version + "/images", imageRoutes)
     app.use(version + "/roles", roleRoutes)
+    app.use(version + "/permissions", permissionRoutes);
 };
 
 export default router;

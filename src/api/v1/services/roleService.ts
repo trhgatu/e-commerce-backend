@@ -1,6 +1,6 @@
 const isDev = process.env.NODE_ENV === 'development';
 
-import RoleModel, {IRole} from '../models/roleModel'
+import RoleModel, { IRole } from '../models/roleModel'
 
 import { paginate } from '../utils/pagination';
 import {
@@ -35,6 +35,9 @@ export const getAllRoles = async (
     { page, limit },
     finalFilters,
     sort,
+    [
+      { path: 'permissions', select: 'name description' },
+    ]
   );
 
   if (!isDev) {

@@ -14,7 +14,6 @@ export interface IUser extends Document {
   gender: 'male' | 'female' | 'other';
   birthDate?: Date;
   roleId?: mongoose.Types.ObjectId;
-  isActive: boolean;
   emailVerified: boolean;
   lastLoginAt?: Date;
 
@@ -39,7 +38,6 @@ const userSchema: Schema<IUser> = new Schema(
     gender: { type: String, enum: ['male', 'female', 'other'], default: 'other' },
     birthDate: { type: Date },
     roleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
-    isActive: { type: Boolean, default: true },
     emailVerified: { type: Boolean, default: false },
     lastLoginAt: { type: Date },
 
