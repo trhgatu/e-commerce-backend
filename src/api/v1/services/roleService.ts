@@ -36,7 +36,7 @@ export const getAllRoles = async (
     finalFilters,
     sort,
     [
-      { path: 'permissions', select: 'name description' },
+      { path: 'permissions', select: 'name description group label' },
     ]
   );
 
@@ -128,3 +128,20 @@ export const restoreRole = async (id: string): Promise<IRole | null> => {
 
   return restored;
 };
+
+export const assignPermissionsToRole = async (
+  roleId: string,
+  permissionIds: string[],
+): Promise<IRole | null> => {
+  const updated = await RoleModel.findByIdAndUpdate(
+    roleId,
+    { permissions: permissionIds },
+    { new: true }
+  ).lean();
+
+  if (updated) {
+    await deleteCache(`role:${roleId}`);
+    await deleteKeysByPattern('roles:*');
+  }
+  return updated;
+}

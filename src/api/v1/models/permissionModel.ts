@@ -1,6 +1,5 @@
 // models/Permission.ts
 import mongoose, { Schema, Document } from 'mongoose';
-import { boolean } from 'zod';
 
 export interface IPermission extends Document {
   name: string;

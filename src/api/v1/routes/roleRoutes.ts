@@ -19,4 +19,6 @@ router.delete('/delete/:id', controller.softDeleteRole);
 
 router.post('/restore/:id', controller.restoreRole);
 
+router.put('/assign-permissions/:id', controller.assignPermissionsToRole);
+
 export default router;
