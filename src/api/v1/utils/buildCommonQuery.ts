@@ -18,6 +18,11 @@ export const buildCommonQuery = (
     filters.isDeleted = isDeleted === "true";
   }
 
+  const status = req.query.status;
+  if (typeof status === "string") {
+    filters.status = status;
+  }
+
   // Unified keyword search
   const keyword = (req.query.search as string) || "";
 

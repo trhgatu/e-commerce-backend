@@ -1,6 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import slugify from 'slugify';
 
+export enum ProductStatus {
+  ACTIVE = 'active',
+  DRAFT = 'draft',
+  OUT_OF_STOCK = 'out_of_stock',
+  DISCONTINUED = 'discontinued',
+}
+
 export interface IProduct extends Document {
   name: string;
   slug: string;
@@ -14,6 +21,7 @@ export interface IProduct extends Document {
     colorId: mongoose.Types.ObjectId;
     stock: number;
   }[];
+  status: ProductStatus;
   categoryId: mongoose.Types.ObjectId;
   brandId: mongoose.Types.ObjectId;
   isFeatured: boolean;
@@ -35,6 +43,13 @@ const productSchema = new Schema<IProduct>(
     thumbnail: { type: String },
     tags: { type: [String], default: [] },
     stock: { type: Number, default: 0, min: 0 },
+
+    status: {
+      type: String,
+      enum: Object.values(ProductStatus),
+      default: ProductStatus.DRAFT,
+      required: true,
+    },
 
     colorVariants: [
       {
@@ -62,7 +77,7 @@ const productSchema = new Schema<IProduct>(
     discountPercent: { type: Number, default: 0, min: 0, max: 100 },
     rating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0, min: 0 },
-    isDeleted: {type: Boolean, default: false}
+    isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

@@ -1,9 +1,15 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export enum ColorStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+}
+
 export interface IColor extends Document {
   name: string;
   hexCode: string;
   description?: string;
+  status: ColorStatus;
   isDeleted?: boolean;
 }
 
@@ -17,6 +23,12 @@ const colorSchema: Schema<IColor> = new Schema(
       set: (val: string) => val.toLowerCase(),
     },
     description: { type: String },
+    status: {
+      type: String,
+      enum: Object.values(ColorStatus),
+      default: ColorStatus.ACTIVE,
+      required: true,
+    },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }

@@ -1,11 +1,18 @@
 // src/models/User.ts
 import mongoose, { Schema, Document } from 'mongoose';
 
+export enum UserStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  BANNED = 'banned',
+  PENDING = 'pending'
+}
+
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;
   email: string;
   password: string;
-  status: 'active' | 'inactive' | 'banned';
+  status: UserStatus;
   fullName: string;
   username: string;
   phone?: string;
@@ -34,7 +41,12 @@ const userSchema: Schema<IUser> = new Schema(
     phone: { type: String },
     avatarUrl: { type: String },
     address: { type: String },
-    status: { type: String, enum: ['active', 'inactive', 'banned'], default: 'active' },
+    status: {
+      type: String,
+      enum: Object.values(UserStatus),
+      default: UserStatus.ACTIVE,
+      required: true,
+    },
     gender: { type: String, enum: ['male', 'female', 'other'], default: 'other' },
     birthDate: { type: Date },
     roleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
