@@ -1,38 +1,49 @@
 import CategoryModel, { ICategory } from '../models/categoryModel';
 import { paginate } from '../utils/pagination';
-import { setCache, getCache, deleteCache, deleteKeysByPattern } from './redisService';
+import {
+  setCache,
+  getCache,
+  deleteCache,
+  deleteKeysByPattern
+} from './redisService';
 
 export const getAllCategories = async (
-    page: number,
-    limit: number,
-    filters: Record<string, any> = {},
-    sort: Record<string, 1 | -1> = {}
+  page: number,
+  limit: number,
+  filters: Record<string, any> = {},
+  sort: Record<string, 1 | -1> = {}
 ) => {
-    const cacheKey = `categories:page=${page}:limit=${limit}:filters=${JSON.stringify(filters)}:sort=${JSON.stringify(sort)}`;
-    const cached = await getCache(cacheKey);
-    if (cached) return cached;
+  const finalFilters: Record<string, any> = {
+    isDeleted: false,
+    ...filters,
+  }
+  const cacheKey = `categories:page=${page}:limit=${limit}:filters=${JSON.stringify(
+    finalFilters
+  )}:sort=${JSON.stringify(sort)}`;
+  const cached = await getCache(cacheKey);
+  if (cached) return cached;
 
-    const result = await paginate<ICategory>(
-        CategoryModel,
-        { page, limit },
-        filters,
-        sort,
-    );
+  const result = await paginate<ICategory>(
+    CategoryModel,
+    { page, limit },
+    finalFilters,
+    sort,
+  );
 
-    await setCache(cacheKey, result, 600);
-    return result;
+  await setCache(cacheKey, result, 600);
+  return result;
 };
 
 
 export const getCategoryById = async (id: string): Promise<ICategory | null> => {
-    const cacheKey = `category:${id}`;
-    const cached = await getCache<ICategory>(cacheKey);
-    if (cached) return cached;
+  const cacheKey = `category:${id}`;
+  const cached = await getCache<ICategory>(cacheKey);
+  if (cached) return cached;
 
-    const category = await CategoryModel.findById(id).lean();
-    if (category) await setCache(cacheKey, category, 600);
+  const category = await CategoryModel.findById(id).lean();
+  if (category) await setCache(cacheKey, category, 600);
 
-    return category;
+  return category;
 };
 
 
