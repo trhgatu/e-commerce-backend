@@ -7,6 +7,8 @@ import cors from 'cors';
 import applyRoutes from './api/v1/routes';
 import cookieParser from 'cookie-parser';
 import redisClient from './config/redis';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
 
 dotenv.config();
 
@@ -30,6 +32,9 @@ const startServer = async () => {
         app.use(bodyParser.urlencoded({ extended: false }));
         app.use(express.json());
         app.use(cookieParser());
+
+        //Swagger
+        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
         applyRoutes(app);
 

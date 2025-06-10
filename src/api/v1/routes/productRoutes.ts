@@ -6,6 +6,22 @@ import { createProductSchema, updateProductSchema } from '../validators/productV
 const router = express.Router();
 
 // GET /api/v1/products - Get all products with pagination
+/**
+ * @swagger
+ * /products:
+ *   get:
+ *     summary: Lấy danh sách sản phẩm
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Trang hiện tại
+ *     responses:
+ *       200:
+ *         description: Danh sách sản phẩm
+ */
 router.get('/', controller.getAllProducts);
 
 // GET /api/v1/products/:id - Get product by ID
