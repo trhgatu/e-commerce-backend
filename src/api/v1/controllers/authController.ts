@@ -33,12 +33,14 @@ const controller = {
             }).populate('roleId', 'name permissions');
 
             if (!user) {
-                return res.status(401).json({ error: 'Invalid email/username or password' });
+                res.status(401).json({ error: 'Invalid email/username or password' });
+                return;
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
-                return res.status(401).json({ error: 'Invalid email/username or password' });
+                res.status(401).json({ error: 'Invalid email/username or password' });
+                return
             }
 
             const token = generateJwt({
@@ -46,7 +48,7 @@ const controller = {
                 email: user.email,
                 roleId: user.roleId?._id.toString()
             });
-            return res.json({
+            res.json({
                 token,
                 user: {
                     _id: user._id,
@@ -56,9 +58,11 @@ const controller = {
                     roleId: user.roleId,
                 }
             });
+            return
         } catch (error) {
             console.error('Login error:', error);
-            return res.status(500).json({ error: 'Server error' });
+            res.status(500).json({ error: 'Server error' });
+            return
         }
     }
 
