@@ -35,7 +35,7 @@ This is the backend API for an e-commerce/admin system, built with **Express**, 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/backend.git
+git clone https://github.com/trhgatu/e-commerce-backend.git
 cd trhgatu-e-commerce-backend
 
 # Install dependencies
@@ -152,4 +152,4 @@ MIT License – Free to use for personal or commercial projects.
 
 ---
 
-> Built with ❤️ by your team
+> Built with ❤️ by trhgatu - a passionate Fullstack Developer
