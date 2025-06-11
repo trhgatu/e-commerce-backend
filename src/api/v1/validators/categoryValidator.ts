@@ -17,4 +17,4 @@ export const baseCategorySchema = z.object({
 
 export const updateCategorySchema = baseCategorySchema.partial();
 
-export const createCategorySchema = baseCategorySchema.partial();
+export const createCategorySchema = baseCategorySchema;
