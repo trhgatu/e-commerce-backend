@@ -31,7 +31,11 @@ const options = {
     servers,
     paths: {},
   },
-  apis: ['src/api/v1/routes/**/*.ts', 'src/api/v1/controllers/**/*.ts', 'src/models/**/*.ts'],
+  apis: ['src/api/v1/routes/**/*.ts',
+    'src/api/v1/controllers/**/*.ts',
+    'src/models/**/*.ts',
+    'src/api/v1/docs/**/*.ts'
+  ],
 };
 
 export const swaggerSpec = swaggerJSDoc(options);
