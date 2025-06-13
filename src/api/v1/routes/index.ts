@@ -10,6 +10,7 @@ import orderRoutes from "./orderRoutes";
 import imageRoutes from "./imageRoutes"
 import roleRoutes from "./roleRoutes"
 import permissionRoutes from "./permissionRoutes";
+import inventoryRoutes from "./inventoryRoutes"
 
 const router = (app: Express) => {
     const version = "/api/v1";
@@ -24,6 +25,7 @@ const router = (app: Express) => {
     app.use(version + "/images", imageRoutes)
     app.use(version + "/roles", roleRoutes)
     app.use(version + "/permissions", permissionRoutes);
+    app.use(version + "/inventories", inventoryRoutes);
 };
 
 export default router;
