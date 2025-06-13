@@ -31,6 +31,11 @@ export const buildCommonQuery = (
       [field]: { $regex: keyword, $options: "i" },
     }));
   }
+  //Group - for Permission
+  const group = req.query.group;
+  if (typeof group === "string") {
+    filters.group = group;
+  }
 
   // Sorting
   const sortBy = (req.query.sortBy as string) || "createdAt";

@@ -37,7 +37,6 @@ const controller = {
   },
 
   logout: async (_req: Request, res: Response) => {
-    // For stateless JWT, logout is client-side
     res.status(200).json({
       success: true,
       code: 200,

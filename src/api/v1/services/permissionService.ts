@@ -1,5 +1,3 @@
-const isDev = process.env.NODE_ENV === 'development';
-
 import PermissionModel, { IPermission } from '../models/permissionModel';
 
 import { paginate } from '../utils/pagination';
@@ -25,10 +23,8 @@ export const getAllPermissions = async (
         finalFilters
     )}:sort=${JSON.stringify(sort)}`;
 
-    if (!isDev) {
-        const cached = await getCache(cacheKey);
-        if (cached) return cached;
-    }
+    const cached = await getCache(cacheKey);
+    if (cached) return cached;
 
     const result = await paginate<IPermission>(
         PermissionModel,
@@ -37,15 +33,10 @@ export const getAllPermissions = async (
         sort,
 
     );
-
-    if (!isDev) {
-        await setCache(cacheKey, result, 600);
-    }
-
+    await setCache(cacheKey, result, 600);
     return result;
 };
 
-// Get permission by ID + cache
 export const getPermissionById = async (id: string): Promise<IPermission | null> => {
     const cacheKey = `permission:${id}`;
 
@@ -74,19 +65,18 @@ export const createPermission = async (
 };
 
 export const bulkCreatePermissions = async (
-  data: Partial<IPermission>[]
+    data: Partial<IPermission>[]
 ): Promise<IPermission[]> => {
-  const validData = data.filter(
-    (item): item is Pick<IPermission, 'name' | 'label' | 'group'> =>
-      !!item.name && !!item.label && !!item.group
-  );
-  const saved = await PermissionModel.insertMany(validData);
-  await deleteKeysByPattern('permissions:*');
-  return saved as IPermission[];
+    const validData = data.filter(
+        (item): item is Pick<IPermission, 'name' | 'label' | 'group'> =>
+            !!item.name && !!item.label && !!item.group
+    );
+    const saved = await PermissionModel.insertMany(validData);
+    await deleteKeysByPattern('permissions:*');
+    return saved as IPermission[];
 };
 
 
-// Update Permission + invalidate cả danh sách & chi tiết
 export const updatePermission = async (
     id: string,
     data: Partial<IPermission>
@@ -101,7 +91,6 @@ export const updatePermission = async (
     return updated;
 };
 
-// Delete permission + invalidate cả danh sách & chi tiết
 export const hardDeletePermission = async (id: string): Promise<IPermission | null> => {
     const deleted = await PermissionModel.findByIdAndDelete(id).lean();
 
