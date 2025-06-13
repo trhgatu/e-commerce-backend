@@ -1,12 +1,31 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export enum OrderStatus {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  SHIPPED = 'shipped',
+  DELIVERED = 'delivered',
+  CANCELLED = 'cancelled'
+}
+
+export enum PaymentStatus {
+  UNPAID = 'unpaid',
+  PAID = 'paid',
+  REFUNDED = 'refunded'
+}
+
+export enum PaymentMethod {
+  COD = 'cod',
+  MOMO = 'momo',
+  VNPAY = 'vnpay'
+}
 export interface IOrder extends Document {
   userId: mongoose.Types.ObjectId;
   items: { productId: mongoose.Types.ObjectId; quantity: number; price: number }[];
   total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  paymentStatus: 'unpaid' | 'paid' | 'refunded';
-  paymentMethod: 'cod' | 'momo' | 'vnpay';
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  paymentMethod: PaymentMethod;
   shippingInfo: {
     fullName: string;
     phone: string;
@@ -30,20 +49,20 @@ const orderSchema: Schema<IOrder> = new Schema(
 
     status: {
       type: String,
-      enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
-      default: 'pending',
+      enum: Object.values(OrderStatus),
+      default: OrderStatus.PENDING
     },
 
     paymentStatus: {
       type: String,
-      enum: ['unpaid', 'paid', 'refunded'],
-      default: 'unpaid',
+      enum: Object.values(PaymentStatus),
+      default: PaymentStatus.UNPAID,
     },
 
     paymentMethod: {
       type: String,
-      enum: ['cod', 'momo', 'vnpay'],
-      default: 'cod',
+      enum: Object.values(PaymentMethod),
+      default: PaymentMethod.COD,
     },
 
     shippingInfo: {
