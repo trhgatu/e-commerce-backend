@@ -8,7 +8,7 @@ const controller = {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const { filters, sort } = buildCommonQuery(req, ["name", "description" , "group"]);
+      const { filters, sort } = buildCommonQuery(req, ["name", "description" , "group" , "label"]);
       const result = await permissionService.getAllPermissions(
         page,
         limit,
