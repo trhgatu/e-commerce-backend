@@ -16,11 +16,6 @@ export interface IProduct extends Document {
   images: string[];
   thumbnail?: string;
   tags?: string[];
-  stock: number;
-  colorVariants: {
-    colorId: mongoose.Types.ObjectId;
-    stock: number;
-  }[];
   status: ProductStatus;
   categoryId: mongoose.Types.ObjectId;
   brandId: mongoose.Types.ObjectId;
@@ -28,6 +23,10 @@ export interface IProduct extends Document {
   discountPercent?: number;
   rating: number;
   reviewCount: number;
+  totalStock: number;
+  hasVariants: boolean;
+  availableColors?: mongoose.Types.ObjectId[];
+  availableSizes?: string[];
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -42,7 +41,6 @@ const productSchema = new Schema<IProduct>(
     images: { type: [String], default: [] },
     thumbnail: { type: String },
     tags: { type: [String], default: [] },
-    stock: { type: Number, default: 0, min: 0 },
 
     status: {
       type: String,
@@ -51,32 +49,33 @@ const productSchema = new Schema<IProduct>(
       required: true,
     },
 
-    colorVariants: [
-      {
-        colorId: {
-          type: Schema.Types.ObjectId,
-          ref: 'Color',
-          required: true,
-        },
-        stock: {
-          type: Number,
-          required: true,
-          min: 0,
-        },
-      },
-    ],
-
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: 'Category',
       required: true,
     },
 
-    brandId: { type: Schema.Types.ObjectId, ref: 'Brand', required: true },
+    brandId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Brand',
+      required: true,
+    },
+
     isFeatured: { type: Boolean, default: false },
     discountPercent: { type: Number, default: 0, min: 0, max: 100 },
     rating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0, min: 0 },
+
+    totalStock: { type: Number, default: 0 },
+    hasVariants: { type: Boolean, default: false },
+    availableColors: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Color'
+      }
+    ],
+    availableSizes: [{ type: String }],
+
     isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true }
@@ -98,5 +97,4 @@ productSchema.pre('validate', async function (next) {
 });
 
 const Product = mongoose.model<IProduct>('Product', productSchema, 'products');
-
 export default Product;

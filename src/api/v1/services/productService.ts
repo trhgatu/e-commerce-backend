@@ -37,7 +37,7 @@ export const getAllProducts = async (
     [
       { path: 'categoryId', select: 'name' },
       { path: 'brandId', select: 'name' },
-      { path: 'colorVariants.colorId', select: 'name hexCode' },
+      { path: 'availableColors', select: 'name hexCode' },
     ]
   );
 
@@ -58,7 +58,7 @@ export const getProductById = async (id: string): Promise<IProduct | null> => {
   const product = await ProductModel.findById(id)
     .populate('categoryId', 'name')
     .populate('brandId', 'name')
-    .populate('colorVariants.colorId', 'name hexCode')
+    .populate('availableColors', 'name hexCode')
     .lean();
 
   if (product) {
@@ -67,7 +67,6 @@ export const getProductById = async (id: string): Promise<IProduct | null> => {
 
   return product;
 };
-
 
 export const createProduct = async (
   data: Partial<IProduct>
@@ -80,7 +79,6 @@ export const createProduct = async (
   return saved;
 };
 
-// Update product + invalidate cả danh sách & chi tiết
 export const updateProduct = async (
   id: string,
   data: Partial<IProduct>
@@ -95,7 +93,6 @@ export const updateProduct = async (
   return updated;
 };
 
-// Delete product + invalidate cả danh sách & chi tiết
 export const hardDeleteProduct = async (id: string): Promise<IProduct | null> => {
   const deleted = await ProductModel.findByIdAndDelete(id).lean();
 
