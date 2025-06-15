@@ -85,17 +85,24 @@ export const createProduct = async (
 
 export const updateProduct = async (
   id: string,
-  data: Partial<IProduct>
+  data: Partial<IProduct>,
+  userId: string
 ): Promise<IProduct | null> => {
-  const updated = await ProductModel.findByIdAndUpdate(id, data, {
-    new: true,
-  }).lean();
+  const updated = await ProductModel.findByIdAndUpdate(
+    id,
+    {
+      ...data,
+      updatedBy: userId,
+    },
+    { new: true }
+  ).lean();
 
   await deleteCache(`product:${id}`);
   await deleteKeysByPattern('products:*');
 
   return updated;
 };
+
 
 export const hardDeleteProduct = async (id: string): Promise<IProduct | null> => {
   const deleted = await ProductModel.findByIdAndDelete(id).lean();

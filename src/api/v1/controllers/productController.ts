@@ -76,8 +76,11 @@ const controller = {
 
   updateProduct: async (req: Request, res: Response) => {
     try {
+      const userId = req.user?._id;
+      if (!userId) throw new Error('User ID is missing from request');
+
       const productData = req.body;
-      const product = await productService.updateProduct(req.params.id, productData);
+      const product = await productService.updateProduct(req.params.id, productData, userId);
 
       if (!product) {
         res.status(404).json({
@@ -87,6 +90,9 @@ const controller = {
         });
         return;
       }
+
+      res.locals.targetId = product._id?.toString();
+      res.locals.description = `Updated product: ${product.name}`;
 
       res.status(200).json({
         success: true,
@@ -98,7 +104,6 @@ const controller = {
       handleError(res, error, 'Failed to update product', 400);
     }
   },
-
   hardDeleteProduct: async (req: Request, res: Response) => {
     try {
       const product = await productService.hardDeleteProduct(req.params.id);

@@ -21,7 +21,13 @@ router.post(
 );
 
 
-router.put('/update/:id', validate(updateProductSchema), controller.updateProduct);
+router.put(
+  '/update/:id',
+  protect,
+  validate(updateProductSchema),
+  createLog(LogAction.UPDATE, 'Product'),
+  controller.updateProduct
+);
 
 router.delete('/hard-delete/:id', controller.hardDeleteProduct);
 
