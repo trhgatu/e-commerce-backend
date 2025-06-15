@@ -9,6 +9,7 @@ export const createOrder = async (data: Partial<IOrder>): Promise<IOrder> => {
   session.startTransaction();
 
   try {
+    console.log('[DEBUG] full items:', data.items);
     for (const item of data.items || []) {
       const inventory = await Inventory.findById(item.inventoryId).session(session);
 
