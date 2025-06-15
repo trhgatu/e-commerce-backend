@@ -21,9 +21,17 @@ export enum PaymentMethod {
 }
 export interface IOrder extends Document {
   userId: mongoose.Types.ObjectId;
-  items: { productId: mongoose.Types.ObjectId; quantity: number; price: number }[];
+  items: {
+    inventoryId: mongoose.Types.ObjectId;
+    productId: mongoose.Types.ObjectId;
+    colorId?: mongoose.Types.ObjectId;
+    size?: string;
+    quantity: number;
+    price: number;
+  }[];
   total: number;
   status: OrderStatus;
+  note: string;
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
   shippingInfo: {
@@ -33,6 +41,7 @@ export interface IOrder extends Document {
   };
   createdAt: Date;
   updatedAt: Date;
+  isDeleted: boolean
 }
 
 const orderSchema: Schema<IOrder> = new Schema(
@@ -56,6 +65,7 @@ const orderSchema: Schema<IOrder> = new Schema(
       default: OrderStatus.PENDING
     },
 
+    note: { type: String },
     paymentStatus: {
       type: String,
       enum: Object.values(PaymentStatus),
@@ -73,6 +83,7 @@ const orderSchema: Schema<IOrder> = new Schema(
       phone: { type: String, required: true },
       address: { type: String, required: true },
     },
+    isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

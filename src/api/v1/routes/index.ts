@@ -13,6 +13,7 @@ import permissionRoutes from "./permissionRoutes";
 import inventoryRoutes from "./inventoryRoutes"
 import voucherRoutes from "./voucherRoutes"
 import logRoutes from "./logRoutes"
+import addressRoutes from "./addressRoutes"
 
 const router = (app: Express) => {
     const version = "/api/v1";
@@ -30,6 +31,7 @@ const router = (app: Express) => {
     app.use(version + "/inventories", inventoryRoutes);
     app.use(version + "/vouchers", voucherRoutes);
     app.use(version + "/logs", logRoutes);
+    app.use(version + "/addresses", addressRoutes);
 };
 
 export default router;

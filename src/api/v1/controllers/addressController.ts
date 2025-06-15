@@ -41,7 +41,29 @@ const controller = {
             handleError(res, error, 'Failed to create address', 400);
         }
     },
+    getAddressById: async (req: Request, res: Response) => {
+        try {
+            const address = await addressService.getAddressById(req.params.id);
 
+            if (!address) {
+                res.status(404).json({
+                    success: false,
+                    code: 404,
+                    message: 'Address not found',
+                });
+                return;
+            }
+
+            res.status(200).json({
+                success: true,
+                code: 200,
+                message: 'Address fetched successfully',
+                data: address,
+            });
+        } catch (error) {
+            handleError(res, error, 'Failed to fetch address', 400);
+        }
+    },
     updateAddress: async (req: Request, res: Response) => {
         try {
             const address = await addressService.updateAddress(req.params.id, req.body);

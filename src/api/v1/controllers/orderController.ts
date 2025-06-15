@@ -1,66 +1,38 @@
-// src/controllers/orderController.ts
 import { Request, Response } from 'express';
 import * as orderService from '../services/orderService';
 import { handleError } from '../utils/handleError';
+import mongoose from 'mongoose';
 
 const controller = {
     createOrder: async (req: Request, res: Response) => {
         try {
-            const orderData = req.body;
-            const order = await orderService.createOrder(orderData);
+            const userId = req.user?._id;
+            if (!userId) throw new Error('User not authenticated');
+
+            const { items, shippingInfo, paymentMethod, total } = req.body;
+
+            const created = await orderService.createOrder({
+                userId: new mongoose.Types.ObjectId(userId),
+                items,
+                shippingInfo,
+                paymentMethod,
+                total,
+            });
 
             res.status(201).json({
                 success: true,
                 code: 201,
                 message: 'Order created successfully',
-                data: order,
+                data: created,
             });
         } catch (error) {
             handleError(res, error, 'Failed to create order', 400);
         }
     },
 
-    getAllOrders: async (_req: Request, res: Response) => {
-        try {
-            const orders = await orderService.getAllOrders();
-            res.status(200).json({
-                success: true,
-                code: 200,
-                message: 'All orders fetched',
-                data: orders,
-            });
-        } catch (error) {
-            handleError(res, error, 'Failed to fetch orders', 400);
-        }
-    },
-
-    getMyOrders: async (req: Request, res: Response) => {
-        try {
-            const userId = req.user?._id;
-            if (!userId) {
-                res.status(400).json({
-                    success: false,
-                    code: 400,
-                    message: 'User ID is required',
-                });
-                return;
-            }
-            const orders = await orderService.getOrdersByUserId(userId);
-            res.status(200).json({
-                success: true,
-                code: 200,
-                message: 'User orders fetched',
-                data: orders,
-            });
-        } catch (error) {
-            handleError(res, error, 'Failed to fetch user orders', 400);
-        }
-    },
-
     getOrderById: async (req: Request, res: Response) => {
         try {
             const order = await orderService.getOrderById(req.params.id);
-
             if (!order) {
                 res.status(404).json({
                     success: false,
@@ -81,6 +53,23 @@ const controller = {
         }
     },
 
+    getMyOrders: async (req: Request, res: Response) => {
+        try {
+            const userId = req.user?._id;
+            if (!userId) throw new Error('User not authenticated');
+
+            const orders = await orderService.getUserOrders(userId);
+            res.status(200).json({
+                success: true,
+                code: 200,
+                message: 'Orders fetched successfully',
+                data: orders,
+            });
+        } catch (error) {
+            handleError(res, error, 'Failed to fetch orders', 400);
+        }
+    },
+
     updateOrderStatus: async (req: Request, res: Response) => {
         try {
             const { status } = req.body;
@@ -90,7 +79,7 @@ const controller = {
                 res.status(404).json({
                     success: false,
                     code: 404,
-                    message: 'Order not found',
+                    message: 'Order not found or status not changed',
                 });
                 return;
             }
@@ -98,11 +87,11 @@ const controller = {
             res.status(200).json({
                 success: true,
                 code: 200,
-                message: 'Order status updated',
+                message: 'Order status updated successfully',
                 data: updated,
             });
         } catch (error) {
-            handleError(res, error, 'Failed to update status', 400);
+            handleError(res, error, 'Failed to update order status', 400);
         }
     },
 
@@ -115,7 +104,7 @@ const controller = {
                 res.status(404).json({
                     success: false,
                     code: 404,
-                    message: 'Order not found',
+                    message: 'Order not found or payment status not changed',
                 });
                 return;
             }
@@ -123,7 +112,7 @@ const controller = {
             res.status(200).json({
                 success: true,
                 code: 200,
-                message: 'Payment status updated',
+                message: 'Payment status updated successfully',
                 data: updated,
             });
         } catch (error) {
@@ -131,15 +120,14 @@ const controller = {
         }
     },
 
-    deleteOrder: async (req: Request, res: Response) => {
+    cancelOrder: async (req: Request, res: Response) => {
         try {
-            const deleted = await orderService.deleteOrder(req.params.id);
-
-            if (!deleted) {
+            const cancelled = await orderService.cancelOrder(req.params.id);
+            if (!cancelled) {
                 res.status(404).json({
                     success: false,
                     code: 404,
-                    message: 'Order not found',
+                    message: 'Order not found or cannot be cancelled',
                 });
                 return;
             }
@@ -147,10 +135,11 @@ const controller = {
             res.status(200).json({
                 success: true,
                 code: 200,
-                message: 'Order deleted',
+                message: 'Order cancelled successfully',
+                data: cancelled,
             });
         } catch (error) {
-            handleError(res, error, 'Failed to delete order', 400);
+            handleError(res, error, 'Failed to cancel order', 400);
         }
     },
 };

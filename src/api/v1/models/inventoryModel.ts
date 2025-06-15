@@ -36,5 +36,11 @@ const inventorySchema = new Schema<IInventory>(
   { timestamps: true }
 );
 
+inventorySchema.index(
+  { productId: 1, colorId: 1, size: 1 },
+  { unique: true, sparse: true }
+);
+
+
 const Inventory = mongoose.model<IInventory>('Inventory', inventorySchema, 'inventories');
 export default Inventory;
