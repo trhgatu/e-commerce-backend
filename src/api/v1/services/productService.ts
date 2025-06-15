@@ -113,10 +113,16 @@ export const hardDeleteProduct = async (id: string): Promise<IProduct | null> =>
   return deleted;
 };
 
-export const softDeleteProduct = async (id: string): Promise<IProduct | null> => {
+export const softDeleteProduct = async (
+  id: string,
+  userId: string
+): Promise<IProduct | null> => {
   const deleted = await ProductModel.findByIdAndUpdate(
     id,
-    { isDeleted: true },
+    {
+      isDeleted: true,
+      deletedBy: userId,
+    },
     { new: true }
   ).lean();
 
@@ -127,6 +133,7 @@ export const softDeleteProduct = async (id: string): Promise<IProduct | null> =>
 
   return deleted;
 };
+
 export const restoreProduct = async (id: string): Promise<IProduct | null> => {
   const restored = await ProductModel.findByIdAndUpdate(
     id,

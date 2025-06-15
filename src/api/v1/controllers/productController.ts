@@ -128,7 +128,9 @@ const controller = {
   },
   softDeleteProduct: async (req: Request, res: Response) => {
     try {
-      const product = await productService.softDeleteProduct(req.params.id);
+      const userId = req.user?._id;
+      if (!userId) throw new Error('User ID is missing from request');
+      const product = await productService.softDeleteProduct(req.params.id, userId);
       if (!product) {
         res.status(404).json({
           success: false,
@@ -137,11 +139,14 @@ const controller = {
         });
         return;
       }
+      res.locals.targetId = product._id?.toString();
+      res.locals.description = `Deleted product: ${product.name}`
 
       res.status(200).json({
         success: true,
         code: 200,
         message: 'Product deleted successfully',
+        data: product
       });
     } catch (error) {
       handleError(res, error, 'Failed to delete product', 400);

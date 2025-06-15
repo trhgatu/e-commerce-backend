@@ -31,7 +31,12 @@ router.put(
 
 router.delete('/hard-delete/:id', controller.hardDeleteProduct);
 
-router.delete('/delete/:id', controller.softDeleteProduct);
+router.delete(
+  '/delete/:id',
+  protect,
+  createLog(LogAction.DELETE, 'Product'),
+  controller.softDeleteProduct
+);
 
 router.put('/restore/:id', controller.restoreProduct);
 
