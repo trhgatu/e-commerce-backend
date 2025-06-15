@@ -47,8 +47,14 @@ export const getCategoryById = async (id: string): Promise<ICategory | null> => 
 };
 
 
-export const createCategory = async (data: Partial<ICategory>): Promise<ICategory> => {
-  const category = new CategoryModel(data);
+export const createCategory = async (
+  data: Partial<ICategory>,
+  userId: string
+): Promise<ICategory> => {
+  const category = new CategoryModel({
+    ...data,
+    createdBy: userId,
+  });
   const saved = await category.save();
 
   await deleteKeysByPattern('categories:*');
@@ -60,9 +66,17 @@ export const createCategory = async (data: Partial<ICategory>): Promise<ICategor
 
 export const updateCategory = async (
   id: string,
-  data: Partial<ICategory>
+  data: Partial<ICategory>,
+  userId: string
 ): Promise<ICategory | null> => {
-  const updated = await CategoryModel.findByIdAndUpdate(id, data, { new: true }).lean();
+  const updated = await CategoryModel.findByIdAndUpdate(
+    id,
+    {
+      ...data,
+      updatedBy: userId
+    },
+    { new: true }
+  ).lean();
 
   await deleteCache(`category:${id}`);
   await deleteKeysByPattern('categories:*');
@@ -80,10 +94,16 @@ export const hardDeleteCategory = async (id: string): Promise<ICategory | null> 
   return deleted;
 };
 
-export const softDeleteCategory = async (id: string): Promise<ICategory | null> => {
+export const softDeleteCategory = async (
+  id: string,
+  userId: string
+): Promise<ICategory | null> => {
   const deleted = await CategoryModel.findByIdAndUpdate(
     id,
-    { isDeleted: true },
+    {
+      isDeleted: true,
+      deletedBy: userId
+    },
     { new: true }
   ).lean();
 

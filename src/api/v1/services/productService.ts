@@ -73,14 +73,14 @@ export const createProduct = async (
   data: Partial<IProduct>,
   userId: string
 ): Promise<IProduct> => {
-   const product = new ProductModel({
+  const product = new ProductModel({
     ...data,
     createdBy: userId,
   });
   const saved = await product.save();
 
   await deleteKeysByPattern('products:*');
-
+  await deleteCache(`product:${saved._id}`);
   return saved;
 };
 

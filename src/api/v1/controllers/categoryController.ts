@@ -58,13 +58,18 @@ const controller = {
   // Create new category
   createCategory: async (req: Request, res: Response) => {
     try {
+      const userId = req.user?._id;
+      if (!userId) throw new Error('User ID is missing from request');
       const categoryData = req.body;
 
       if (!categoryData.parentId) {
         categoryData.parentId = null;
       }
 
-      const category = await categoryService.createCategory(categoryData);
+      const category = await categoryService.createCategory(categoryData, userId);
+
+      res.locals.targetId = category._id?.toString() || '';
+      res.locals.description = `Created category: ${category.name}`;
 
       res.status(201).json({
         success: true,
@@ -80,8 +85,10 @@ const controller = {
   // Update category
   updateCategory: async (req: Request, res: Response) => {
     try {
+      const userId = req.user?._id;
+      if (!userId) throw new Error('User ID is missing from request');
       const categoryData = req.body;
-      const category = await categoryService.updateCategory(req.params.id, categoryData);
+      const category = await categoryService.updateCategory(req.params.id, categoryData, userId);
 
       if (!category) {
         res.status(404).json({
@@ -91,6 +98,9 @@ const controller = {
         });
         return;
       }
+
+      res.locals.targetId = category._id?.toString();
+      res.locals.description = `Updated category: ${category.name}`;
 
       res.status(200).json({
         success: true,
@@ -127,7 +137,9 @@ const controller = {
   },
   softDeleteCategory: async (req: Request, res: Response) => {
     try {
-      const category = await categoryService.softDeleteCategory(req.params.id);
+      const userId = req.user?._id;
+      if (!userId) throw new Error('User ID is missing from request');
+      const category = await categoryService.softDeleteCategory(req.params.id, userId);
       if (!category) {
         res.status(404).json({
           success: false,
@@ -136,7 +148,8 @@ const controller = {
         });
         return;
       }
-
+res.locals.targetId = category._id?.toString();
+      res.locals.description = `Deleted category: ${category.name}`
       res.status(200).json({
         success: true,
         code: 200,
