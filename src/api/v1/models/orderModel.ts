@@ -40,7 +40,10 @@ const orderSchema: Schema<IOrder> = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     items: [
       {
+        inventoryId: { type: Schema.Types.ObjectId, ref: 'Inventory', required: true },
         productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+        colorId: { type: Schema.Types.ObjectId, ref: 'Color' },
+        size: { type: String },
         quantity: { type: Number, required: true, min: 1 },
         price: { type: Number, required: true },
       },
@@ -74,4 +77,6 @@ const orderSchema: Schema<IOrder> = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model<IOrder>('Order', orderSchema, 'orders');
+const Order = mongoose.model<IOrder>('Order', orderSchema, 'orders');
+
+export default Order;
