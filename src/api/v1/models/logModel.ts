@@ -11,12 +11,12 @@ export enum LogAction {
 }
 
 export interface ILog extends Document {
-  userId: mongoose.Types.ObjectId;        // Ai thao tác
-  targetModel: string;                    // Tên collection bị thao tác (vd: Product)
-  targetId: mongoose.Types.ObjectId;      // Id bản ghi bị thao tác
-  action: LogAction;                      // Loại hành động
-  description?: string;                   // Ghi chú chi tiết
-  metadata?: Record<string, any>;         // Tuỳ biến thêm info (VD: old/new value, IP...)
+  userId: mongoose.Types.ObjectId;
+  targetModel: string;
+  targetId: mongoose.Types.ObjectId;
+  action: LogAction;
+  description?: string;
+  metadata?: Record<string, any>;
   createdAt: Date;
 }
 

@@ -7,7 +7,14 @@ export enum UserStatus {
   BANNED = 'banned',
   PENDING = 'pending'
 }
-
+export interface UserPayload {
+  _id: string;
+  email: string;
+  fullName: string;
+  username: string;
+  roleId?: string;
+  status: UserStatus;
+}
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;
   email: string;

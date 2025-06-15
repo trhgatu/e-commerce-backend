@@ -69,9 +69,13 @@ export const getProductById = async (id: string): Promise<IProduct | null> => {
 };
 
 export const createProduct = async (
-  data: Partial<IProduct>
+  data: Partial<IProduct>,
+  userId: string
 ): Promise<IProduct> => {
-  const product = new ProductModel(data);
+   const product = new ProductModel({
+    ...data,
+    createdBy: userId,
+  });
   const saved = await product.save();
 
   await deleteKeysByPattern('products:*');

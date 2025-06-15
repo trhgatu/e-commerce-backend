@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as productService from '../services/productService';
 import { handleError } from '../utils';
 import { buildCommonQuery } from '../utils/buildCommonQuery';
@@ -52,10 +52,16 @@ const controller = {
     }
   },
 
-  createProduct: async (req: Request, res: Response) => {
+  createProduct: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const userId = req.user?._id;
+      if (!userId) throw new Error('User ID is missing from request');
       const productData = req.body;
-      const product = await productService.createProduct(productData);
+      const product = await productService.createProduct(productData, userId);
+
+      res.locals.targetId = product._id?.toString() || '';
+      res.locals.description = `Created product: ${product.name}`;
+
       res.status(201).json({
         success: true,
         code: 201,
@@ -63,6 +69,7 @@ const controller = {
         data: product,
       });
     } catch (error) {
+      next(error);
       handleError(res, error, 'Failed to create product', 400);
     }
   },
@@ -135,7 +142,7 @@ const controller = {
       handleError(res, error, 'Failed to delete product', 400);
     }
   },
-  restoreProduct: async (req:Request, res: Response) => {
+  restoreProduct: async (req: Request, res: Response) => {
     try {
       const product = await productService.restoreProduct(req.params.id);
       if (!product) {

@@ -1,13 +1,10 @@
 import 'express';
+import { UserPayload } from '../../api/v1/models/userModel';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: {
-        userId: string;
-        email: string;
-        roleId?: string;
-      };
+      user?: UserPayload;
     }
   }
 }
