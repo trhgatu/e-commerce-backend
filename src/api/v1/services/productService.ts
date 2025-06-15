@@ -59,6 +59,7 @@ export const getProductById = async (id: string): Promise<IProduct | null> => {
     .populate('categoryId', 'name')
     .populate('brandId', 'name')
     .populate('availableColors', 'name hexCode')
+    .populate('createdBy', 'fullName email')
     .lean();
 
   if (product) {

@@ -18,6 +18,9 @@ export interface ICategory extends Document {
   isDeleted: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  createdBy: mongoose.Types.ObjectId;
+  updatedBy: mongoose.Types.ObjectId;
+  deletedBy: mongoose.Types.ObjectId;
 }
 
 const categorySchema: Schema<ICategory> = new Schema(
@@ -34,7 +37,10 @@ const categorySchema: Schema<ICategory> = new Schema(
     },
 
     icon: { type: String },
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
