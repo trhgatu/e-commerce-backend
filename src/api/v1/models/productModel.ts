@@ -30,6 +30,9 @@ export interface IProduct extends Document {
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
+  createdBy: mongoose.Types.ObjectId;
+  updatedBy: mongoose.Types.ObjectId;
+  deletedBy: mongoose.Types.ObjectId;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -76,7 +79,11 @@ const productSchema = new Schema<IProduct>(
     ],
     availableSizes: [{ type: String }],
 
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+
   },
   { timestamps: true }
 );

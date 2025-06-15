@@ -8,7 +8,6 @@ export enum CategoryStatus {
   ARCHIVED = 'archived'
 }
 
-
 export interface ICategory extends Document {
   name: string;
   slug: string;
