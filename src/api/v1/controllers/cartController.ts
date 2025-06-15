@@ -4,7 +4,7 @@ import * as cartService from '../services/cartService';
 const controller = {
     getCart: async (req: Request, res: Response) => {
         try {
-            const userId = req.user?.userId;
+            const userId = req.user?._id;
             if (!userId) {
                 res.status(401).json({ message: 'Unauthorized' });
                 return;
@@ -19,7 +19,7 @@ const controller = {
 
     addToCart: async (req: Request, res: Response) => {
         try {
-            const userId = req.user?.userId;
+            const userId = req.user?._id;
             const { productId, quantity } = req.body;
 
             if (!userId || !productId) {
@@ -36,7 +36,7 @@ const controller = {
 
     updateQuantity: async (req: Request, res: Response) => {
         try {
-            const userId = req.user?.userId;
+            const userId = req.user?._id;
             const { productId, quantity } = req.body;
 
             if (!userId || !productId || quantity < 1) {
@@ -53,7 +53,7 @@ const controller = {
 
     removeFromCart: async (req: Request, res: Response) => {
         try {
-            const userId = req.user?.userId;
+            const userId = req.user?._id;
             const { productId } = req.params;
 
             if (!userId || !productId) {
@@ -71,7 +71,7 @@ const controller = {
 
     clearCart: async (req: Request, res: Response) => {
         try {
-            const userId = req.user?.userId;
+            const userId = req.user?._id;
             if (!userId) {
                 res.status(401).json({ message: 'Unauthorized' });
                 return;
