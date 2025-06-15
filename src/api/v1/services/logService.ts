@@ -22,7 +22,7 @@ export const getAllLogs = async (
         finalFilters,
         sort,
         [
-            { path: 'createdBy', select: 'fullName email roleId' }
+            { path: 'userId', select: 'fullName email roleId' }
         ]
     );
     await setCache(cacheKey, result, 300);
@@ -36,7 +36,7 @@ export const getLogById = async (id: string): Promise<ILog | null> => {
     if (cached) return cached;
 
     const log = await LogModel.findById(id)
-        .populate({ path: 'createdBy', select: 'fullName email roleId' })
+        .populate({ path: 'userId', select: 'fullName email roleId' })
         .lean();
 
     if (log) {

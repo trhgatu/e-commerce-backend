@@ -8,8 +8,8 @@ router.get('/', /* protect, */ controller.getAllLogs);
 
 router.get('/:id', /* protect, */ controller.getLogById);
 
-router.delete('/:id', /* protect, */ controller.deleteLog);
+router.delete('/delete/:id', /* protect, */ controller.deleteLog);
 
-router.delete('/', /* protect, */ controller.clearAllLogs);
+router.delete('/clear-log', /* protect, */ controller.clearAllLogs);
 
 export default router;
