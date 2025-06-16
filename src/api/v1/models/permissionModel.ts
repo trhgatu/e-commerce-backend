@@ -14,6 +14,9 @@ export interface IPermission extends Document {
   description?: string;
   status: PermissionStatus;
   isDeleted?: boolean;
+  createdBy: mongoose.Types.ObjectId;
+  updatedBy: mongoose.Types.ObjectId;
+  deletedBy: mongoose.Types.ObjectId;
 }
 
 const permissionSchema = new Schema<IPermission>(
@@ -28,7 +31,10 @@ const permissionSchema = new Schema<IPermission>(
       default: PermissionStatus.ACTIVE,
       required: true,
     },
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
