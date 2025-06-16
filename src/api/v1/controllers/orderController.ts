@@ -9,7 +9,7 @@ const controller = {
             const userId = req.user?._id;
             if (!userId) throw new Error('User not authenticated');
 
-            const { items, shippingInfo, paymentMethod, total } = req.body;
+            const { items, shippingInfo, paymentMethod, total, voucherCode } = req.body;
 
             const created = await orderService.createOrder({
                 userId: new mongoose.Types.ObjectId(userId),
@@ -17,6 +17,7 @@ const controller = {
                 shippingInfo,
                 paymentMethod,
                 total,
+                voucherCode,
             });
 
             res.status(201).json({

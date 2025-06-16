@@ -1,8 +1,8 @@
 // src/services/orderService.ts
-import Order, { IOrder, OrderStatus, PaymentStatus } from '../models/orderModel';
+import OrderModel, { IOrder, OrderStatus, PaymentStatus } from '../models/orderModel';
 import { validateVoucherUsage, increaseVoucherUsage } from './voucherService';
 import { CreateOrderInput } from '../types/order/orderDTO';
-import Inventory from '../models/inventoryModel';
+import InventoryModel from '../models/inventoryModel';
 import { deleteKeysByPattern } from './redisService';
 import mongoose from 'mongoose';
 
@@ -12,13 +12,12 @@ export const createOrder = async (data: CreateOrderInput): Promise<IOrder> => {
 
   try {
     const { items, voucherCode, userId, total } = data;
-
     if (!items || items.length === 0) {
       throw new Error('Đơn hàng phải có ít nhất 1 sản phẩm');
     }
 
     for (const item of items) {
-      const inventory = await Inventory.findById(item.inventoryId).session(session);
+      const inventory = await InventoryModel.findById(item.inventoryId).session(session);
 
       if (!inventory || inventory.quantity < item.quantity) {
         throw new Error(`Không đủ tồn kho cho sản phẩm ${item.productId}`);
@@ -29,21 +28,19 @@ export const createOrder = async (data: CreateOrderInput): Promise<IOrder> => {
     }
 
     if (voucherCode) {
-      const { discount, finalTotal, voucher } = await validateVoucherUsage(
+      const result = await validateVoucherUsage(
         voucherCode,
         userId?.toString() || '',
         total || 0
       );
 
+      const { discount, finalTotal, voucher } = result;
+
       data.voucherId = voucher._id;
       data.discount = discount;
       data.finalTotal = finalTotal;
-    } else {
-      data.discount = 0;
-      data.finalTotal = total;
     }
-
-    const order = new Order(data);
+    const order = new OrderModel(data);
     const saved = await order.save({ session });
 
     if (voucherCode && data.voucherId) {
@@ -64,14 +61,14 @@ export const createOrder = async (data: CreateOrderInput): Promise<IOrder> => {
 };
 
 export const getOrderById = async (id: string): Promise<IOrder | null> => {
-  return await Order.findById(id)
+  return await OrderModel.findById(id)
     .populate('userId', 'fullName email')
     .populate('items.productId', 'name price')
     .lean();
 };
 
 export const getUserOrders = async (userId: string): Promise<IOrder[]> => {
-  return await Order.find({ userId })
+  return await OrderModel.find({ userId })
     .sort({ createdAt: -1 })
     .lean();
 };
@@ -80,7 +77,7 @@ export const updateOrderStatus = async (
   id: string,
   status: OrderStatus
 ): Promise<IOrder | null> => {
-  const updated = await Order.findByIdAndUpdate(
+  const updated = await OrderModel.findByIdAndUpdate(
     id,
     { status },
     { new: true }
@@ -94,7 +91,7 @@ export const updatePaymentStatus = async (
   id: string,
   paymentStatus: PaymentStatus
 ): Promise<IOrder | null> => {
-  const updated = await Order.findByIdAndUpdate(
+  const updated = await OrderModel.findByIdAndUpdate(
     id,
     { paymentStatus },
     { new: true }
@@ -107,7 +104,7 @@ export const updatePaymentStatus = async (
 };
 
 export const cancelOrder = async (id: string): Promise<IOrder | null> => {
-  const order = await Order.findById(id);
+  const order = await OrderModel.findById(id);
   if (!order || order.status === OrderStatus.CANCELLED) return null;
 
   const session = await mongoose.startSession();
@@ -115,7 +112,7 @@ export const cancelOrder = async (id: string): Promise<IOrder | null> => {
 
   try {
     for (const item of order.items) {
-      await Inventory.findByIdAndUpdate(
+      await InventoryModel.findByIdAndUpdate(
         item.inventoryId,
         { $inc: { quantity: item.quantity } },
         { session }

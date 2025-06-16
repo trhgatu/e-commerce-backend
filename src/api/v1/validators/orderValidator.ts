@@ -17,7 +17,7 @@ export const createOrderSchema = z.object({
   })).min(1, 'Order must have at least one item'),
 
   total: z.number().min(0, 'Total must be non-negative'),
-
+  voucherCode: z.string().optional(),
   paymentMethod: z.enum(['cod', 'momo', 'vnpay']).default('cod'),
 
   shippingInfo: z.object({
