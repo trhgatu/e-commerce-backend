@@ -129,10 +129,12 @@ const controller = {
 
     updatePaymentStatus: async (req: Request, res: Response) => {
         try {
+            const userId = req.user?._id;
+            if (!userId) throw new Error('User not authenticated');
             const { paymentStatus } = req.body;
-            const updated = await orderService.updatePaymentStatus(req.params.id, paymentStatus);
+            const order = await orderService.updatePaymentStatus(req.params.id, paymentStatus, userId);
 
-            if (!updated) {
+            if (!order) {
                 res.status(404).json({
                     success: false,
                     code: 404,
@@ -140,12 +142,13 @@ const controller = {
                 });
                 return;
             }
-
+            res.locals.targetId = order._id?.toString();
+            res.locals.description = `Updated payment status to: ${order.paymentStatus}`;
             res.status(200).json({
                 success: true,
                 code: 200,
                 message: 'Payment status updated successfully',
-                data: updated,
+                data: order,
             });
         } catch (error) {
             handleError(res, error, 'Failed to update payment status', 400);

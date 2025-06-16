@@ -147,11 +147,12 @@ export const updateOrderStatus = async (
 
 export const updatePaymentStatus = async (
   id: string,
-  paymentStatus: PaymentStatus
+  paymentStatus: PaymentStatus,
+  userId: string
 ): Promise<IOrder | null> => {
   const updated = await OrderModel.findByIdAndUpdate(
     id,
-    { paymentStatus },
+    { paymentStatus, updatedBy: userId },
     { new: true }
   ).lean();
 

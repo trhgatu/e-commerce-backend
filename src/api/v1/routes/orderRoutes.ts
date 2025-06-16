@@ -33,7 +33,11 @@ router.put('/status/:id',
   controller.updateOrderStatus
 );
 
-router.put('/payment/:id', controller.updatePaymentStatus);
+router.put('/payment/:id',
+  protect,
+  createLog(LogAction.UPDATE, 'Order'),
+  controller.updatePaymentStatus
+);
 
 router.put('/cancel/:id', controller.cancelOrder);
 
