@@ -11,6 +11,9 @@ export interface IColor extends Document {
   description?: string;
   status: ColorStatus;
   isDeleted?: boolean;
+  createdBy: mongoose.Types.ObjectId;
+  updatedBy: mongoose.Types.ObjectId;
+  deletedBy: mongoose.Types.ObjectId;
 }
 
 const colorSchema: Schema<IColor> = new Schema(
@@ -30,6 +33,9 @@ const colorSchema: Schema<IColor> = new Schema(
       required: true,
     },
     isDeleted: { type: Boolean, default: false },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
