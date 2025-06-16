@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import * as colorService from '../services/colorService';
 import { handleError } from '../utils/handleError';
-import { createColorSchema, updateColorSchema } from '../validators/colorValidator';
 import { buildCommonQuery } from '../utils/buildCommonQuery';
 
 const controller = {
@@ -51,8 +50,13 @@ const controller = {
 
     createColor: async (req: Request, res: Response) => {
         try {
+            const userId = req.user?._id;
+            if (!userId) throw new Error('User ID is missing from request');
             const colorData = req.body;
-            const color = await colorService.createColor(colorData);
+            const color = await colorService.createColor(colorData, userId);
+
+            res.locals.targetId = color._id?.toString() || '';
+            res.locals.description = `Created color: ${color.name}`;
 
             res.status(201).json({
                 success: true,
@@ -68,8 +72,10 @@ const controller = {
     // Update brand
     updateColor: async (req: Request, res: Response) => {
         try {
+            const userId = req.user?._id;
+            if (!userId) throw new Error('User ID is missing from request');
             const colorData = req.body;
-            const color = await colorService.updateColor(req.params.id, colorData);
+            const color = await colorService.updateColor(req.params.id, colorData, userId);
 
             if (!color) {
                 res.status(404).json({
@@ -79,7 +85,8 @@ const controller = {
                 });
                 return;
             }
-
+            res.locals.targetId = color._id?.toString();
+            res.locals.description = `Updated color: ${color.name}`;
             res.status(200).json({
                 success: true,
                 code: 200,
@@ -114,7 +121,9 @@ const controller = {
     },
     softDeleteColor: async (req: Request, res: Response) => {
         try {
-            const color = await colorService.softDeleteColor(req.params.id);
+            const userId = req.user?._id;
+            if (!userId) throw new Error('User ID is missing from request');
+            const color = await colorService.softDeleteColor(req.params.id, userId);
             if (!color) {
                 res.status(404).json({
                     success: false,
@@ -123,7 +132,8 @@ const controller = {
                 });
                 return;
             }
-
+            res.locals.targetId = color._id?.toString();
+            res.locals.description = `Deleted color: ${color.name}`
             res.status(200).json({
                 success: true,
                 code: 200,

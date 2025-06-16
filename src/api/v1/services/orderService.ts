@@ -21,7 +21,6 @@ export const createOrder = async (
       throw new Error('Đơn hàng phải có ít nhất 1 sản phẩm');
     }
 
-    // 1. Trừ tồn kho
     let calculatedTotal = 0;
 
     for (const item of items) {
@@ -42,7 +41,6 @@ export const createOrder = async (
     }
 
 
-    // 2. Xử lý voucher (nếu có)
     if (voucherCode) {
       const { discount, finalTotal, voucher } = await validateVoucherUsage(
         voucherCode,
@@ -58,15 +56,12 @@ export const createOrder = async (
       data.finalTotal = calculatedTotal;
     }
 
-    // 3. Gán createdBy rõ ràng
     data.userId = userId;
     data.createdBy = userId;
 
-    // 4. Tạo đơn hàng
     const order = new OrderModel(data);
     const saved = await order.save({ session });
 
-    // 5. Cập nhật lượt dùng voucher nếu có
     if (voucherCode && data.voucherId) {
       await increaseVoucherUsage(data.voucherId.toString(), userId);
     }

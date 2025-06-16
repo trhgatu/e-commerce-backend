@@ -34,8 +34,15 @@ export const getColorById = async (id: string): Promise<IColor | null> => {
   return color;
 };
 
-export const createColor = async (data: Partial<IColor>): Promise<IColor> => {
-  const color = new ColorModel(data);
+export const createColor = async (
+  data: Partial<IColor>,
+  userId: string
+): Promise<IColor> => {
+  const color = new ColorModel({
+    ...data,
+    createdBy: userId
+  }
+  );
   const saved = await color.save();
 
   await deleteKeysByPattern('colors:*');
@@ -45,9 +52,13 @@ export const createColor = async (data: Partial<IColor>): Promise<IColor> => {
 
 export const updateColor = async (
   id: string,
-  data: Partial<IColor>
+  data: Partial<IColor>,
+  userId: string
 ): Promise<IColor | null> => {
-  const updated = await ColorModel.findByIdAndUpdate(id, data, { new: true }).lean();
+  const updated = await ColorModel.findByIdAndUpdate(id, {
+    ...data,
+    updatedBy: userId,
+  }, { new: true }).lean();
 
   await deleteCache(`color:${id}`);
   await deleteKeysByPattern('colors:*');
@@ -64,10 +75,16 @@ export const hardDeleteColor = async (id: string): Promise<IColor | null> => {
   return deleted;
 };
 
-export const softDeleteColor = async (id: string): Promise<IColor | null> => {
+export const softDeleteColor = async (
+  id: string,
+  userId: string
+): Promise<IColor | null> => {
   const deleted = await ColorModel.findByIdAndUpdate(
     id,
-    { isDeleted: true },
+    {
+      isDeleted: true,
+      deletedBy: userId
+    },
     { new: true }
   ).lean();
 
