@@ -1,33 +1,60 @@
 // src/services/orderService.ts
 import Order, { IOrder, OrderStatus, PaymentStatus } from '../models/orderModel';
+import { validateVoucherUsage, increaseVoucherUsage } from './voucherService';
+import { CreateOrderInput } from '../types/order/orderDTO';
 import Inventory from '../models/inventoryModel';
 import { deleteKeysByPattern } from './redisService';
 import mongoose from 'mongoose';
 
-export const createOrder = async (data: Partial<IOrder>): Promise<IOrder> => {
+export const createOrder = async (data: CreateOrderInput): Promise<IOrder> => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    console.log('[DEBUG] full items:', data.items);
-    for (const item of data.items || []) {
+    const { items, voucherCode, userId, total } = data;
+
+    if (!items || items.length === 0) {
+      throw new Error('Đơn hàng phải có ít nhất 1 sản phẩm');
+    }
+
+    for (const item of items) {
       const inventory = await Inventory.findById(item.inventoryId).session(session);
 
       if (!inventory || inventory.quantity < item.quantity) {
-        throw new Error(`Not enough stock for item ${item.productId}`);
+        throw new Error(`Không đủ tồn kho cho sản phẩm ${item.productId}`);
       }
 
       inventory.quantity -= item.quantity;
       await inventory.save({ session });
     }
 
+    if (voucherCode) {
+      const { discount, finalTotal, voucher } = await validateVoucherUsage(
+        voucherCode,
+        userId?.toString() || '',
+        total || 0
+      );
+
+      data.voucherId = voucher._id;
+      data.discount = discount;
+      data.finalTotal = finalTotal;
+    } else {
+      data.discount = 0;
+      data.finalTotal = total;
+    }
+
     const order = new Order(data);
     const saved = await order.save({ session });
+
+    if (voucherCode && data.voucherId) {
+      await increaseVoucherUsage(data.voucherId.toString(), userId?.toString() || '');
+    }
 
     await session.commitTransaction();
     session.endSession();
 
     await deleteKeysByPattern('orders:*');
+
     return saved;
   } catch (error) {
     await session.abortTransaction();

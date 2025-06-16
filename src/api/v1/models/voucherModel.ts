@@ -6,6 +6,7 @@ export enum VoucherType {
 }
 
 export interface IVoucher extends Document {
+  _id: mongoose.Types.ObjectId
   code: string;
   type: VoucherType;
   value: number;
