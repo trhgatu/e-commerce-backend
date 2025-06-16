@@ -73,6 +73,8 @@ export const updatePaymentStatus = async (
     { new: true }
   ).lean();
 
+  if (!updated) throw new Error('Order not found');
+
   await deleteKeysByPattern('orders:*');
   return updated;
 };

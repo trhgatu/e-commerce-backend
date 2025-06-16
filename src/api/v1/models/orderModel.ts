@@ -39,6 +39,9 @@ export interface IOrder extends Document {
     phone: string;
     address: string;
   };
+  voucherId?: mongoose.Types.ObjectId;
+  discount?: number;
+  finalTotal?: number;
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
@@ -61,7 +64,9 @@ const orderSchema: Schema<IOrder> = new Schema(
       },
     ],
     total: { type: Number, required: true },
-
+    voucherId: { type: Schema.Types.ObjectId, ref: 'Voucher' },
+    discount: { type: Number, default: 0 },
+    finalTotal: { type: Number },
     status: {
       type: String,
       enum: Object.values(OrderStatus),
@@ -86,6 +91,7 @@ const orderSchema: Schema<IOrder> = new Schema(
       phone: { type: String, required: true },
       address: { type: String, required: true },
     },
+
     isDeleted: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
