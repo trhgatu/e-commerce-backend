@@ -1,12 +1,48 @@
 // src/services/orderService.ts
 import OrderModel, { IOrder, OrderStatus, PaymentStatus } from '../models/orderModel';
 import { IProduct } from '../models/productModel';
+import { getCache, setCache } from './redisService';
 import { validateVoucherUsage, increaseVoucherUsage } from './voucherService';
 import { CreateOrderInput } from '../types/order/orderDTO';
 import InventoryModel from '../models/inventoryModel';
 import { deleteKeysByPattern } from './redisService';
 import mongoose from 'mongoose';
+import { paginate } from '../utils';
 
+export const getAllOrders = async (
+  page: number,
+  limit: number,
+  filters: Record<string, any> = {},
+  sort: Record<string, 1 | -1> = {}
+) => {
+  const finalFilters: Record<string, any> = {
+    isDeleted: false,
+    ...filters,
+  };
+
+  const cacheKey = `orders:page=${page}:limit=${limit}:filters=${JSON.stringify(
+    finalFilters
+  )}:sort=${JSON.stringify(sort)}`;
+
+  const cached = await getCache(cacheKey);
+  if (cached) return cached;
+
+  const result = await paginate<IOrder>(
+    OrderModel,
+    { page, limit },
+    finalFilters,
+    sort,
+    [
+      { path: 'userId', select: 'fullName email' },
+      { path: 'colorId', select: 'name hexCode' },
+      { path: 'items.productId', select: 'name price' },
+      { path: 'voucherId', select: 'code value' },
+    ]
+  );
+
+  await setCache(cacheKey, result);
+  return result;
+};
 export const createOrder = async (
   data: CreateOrderInput,
   userId: string
@@ -96,11 +132,12 @@ export const getUserOrders = async (userId: string): Promise<IOrder[]> => {
 
 export const updateOrderStatus = async (
   id: string,
-  status: OrderStatus
+  status: OrderStatus,
+  userId: string
 ): Promise<IOrder | null> => {
   const updated = await OrderModel.findByIdAndUpdate(
     id,
-    { status },
+    { status, updatedBy: userId },
     { new: true }
   ).lean();
 

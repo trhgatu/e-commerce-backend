@@ -1,8 +1,33 @@
 import { Request, Response } from 'express';
 import * as orderService from '../services/orderService';
 import { handleError } from '../utils/handleError';
-
+import { buildCommonQuery } from '../utils/buildCommonQuery';
 const controller = {
+    getAllOrders: async (req: Request, res: Response) => {
+        try {
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const { filters, sort } = buildCommonQuery(req, ["name", "description"]);
+            const result = await orderService.getAllOrders(
+                page,
+                limit,
+                filters,
+                sort,
+            );
+
+            res.status(200).json({
+                success: true,
+                code: 200,
+                message: 'Orders fetched successfully',
+                data: result.data,
+                currentPage: result.currentPage,
+                totalPages: result.totalPages,
+                totalItems: result.total,
+            });
+        } catch (error) {
+            handleError(res, error, 'Failed to fetch products', 400);
+        }
+    },
     createOrder: async (req: Request, res: Response) => {
         try {
             const userId = req.user?._id;
@@ -75,10 +100,12 @@ const controller = {
 
     updateOrderStatus: async (req: Request, res: Response) => {
         try {
+            const userId = req.user?._id;
+            if (!userId) throw new Error('User not authenticated');
             const { status } = req.body;
-            const updated = await orderService.updateOrderStatus(req.params.id, status);
+            const order = await orderService.updateOrderStatus(req.params.id, status, userId);
 
-            if (!updated) {
+            if (!order) {
                 res.status(404).json({
                     success: false,
                     code: 404,
@@ -86,12 +113,14 @@ const controller = {
                 });
                 return;
             }
+            res.locals.targetId = order._id?.toString();
+            res.locals.description = `Updated order status to: ${order.status}`;
 
             res.status(200).json({
                 success: true,
                 code: 200,
                 message: 'Order status updated successfully',
-                data: updated,
+                data: order,
             });
         } catch (error) {
             handleError(res, error, 'Failed to update order status', 400);
