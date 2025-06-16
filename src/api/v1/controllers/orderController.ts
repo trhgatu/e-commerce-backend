@@ -11,7 +11,7 @@ const controller = {
 
             const { items, shippingInfo, paymentMethod, total, voucherCode } = req.body;
 
-            const created = await orderService.createOrder({
+            const order = await orderService.createOrder({
                 userId: new mongoose.Types.ObjectId(userId),
                 items,
                 shippingInfo,
@@ -19,12 +19,13 @@ const controller = {
                 total,
                 voucherCode,
             });
-
+            res.locals.targetId = order._id?.toString() || '';
+            res.locals.description = `Created order: ${order._id}`;
             res.status(201).json({
                 success: true,
                 code: 201,
                 message: 'Order created successfully',
-                data: created,
+                data: order,
             });
         } catch (error) {
             handleError(res, error, 'Failed to create order', 400);

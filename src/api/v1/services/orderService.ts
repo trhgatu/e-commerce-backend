@@ -6,16 +6,21 @@ import InventoryModel from '../models/inventoryModel';
 import { deleteKeysByPattern } from './redisService';
 import mongoose from 'mongoose';
 
-export const createOrder = async (data: CreateOrderInput): Promise<IOrder> => {
+export const createOrder = async (
+  data: CreateOrderInput,
+  userId: string
+): Promise<IOrder> => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const { items, voucherCode, userId, total } = data;
+    const { items, voucherCode, total } = data;
+
     if (!items || items.length === 0) {
       throw new Error('Đơn hàng phải có ít nhất 1 sản phẩm');
     }
 
+    // 1. Trừ tồn kho
     for (const item of items) {
       const inventory = await InventoryModel.findById(item.inventoryId).session(session);
 
@@ -27,24 +32,32 @@ export const createOrder = async (data: CreateOrderInput): Promise<IOrder> => {
       await inventory.save({ session });
     }
 
+    // 2. Xử lý voucher (nếu có)
     if (voucherCode) {
-      const result = await validateVoucherUsage(
+      const { discount, finalTotal, voucher } = await validateVoucherUsage(
         voucherCode,
-        userId?.toString() || '',
+        userId,
         total || 0
       );
-
-      const { discount, finalTotal, voucher } = result;
 
       data.voucherId = voucher._id;
       data.discount = discount;
       data.finalTotal = finalTotal;
+    } else {
+      data.discount = 0;
+      data.finalTotal = total;
     }
+
+    // 3. Gán createdBy rõ ràng
+    data.createdBy = userId;
+
+    // 4. Tạo đơn hàng
     const order = new OrderModel(data);
     const saved = await order.save({ session });
 
+    // 5. Cập nhật lượt dùng voucher nếu có
     if (voucherCode && data.voucherId) {
-      await increaseVoucherUsage(data.voucherId.toString(), userId?.toString() || '');
+      await increaseVoucherUsage(data.voucherId.toString(), userId);
     }
 
     await session.commitTransaction();
@@ -60,10 +73,12 @@ export const createOrder = async (data: CreateOrderInput): Promise<IOrder> => {
   }
 };
 
+
 export const getOrderById = async (id: string): Promise<IOrder | null> => {
   return await OrderModel.findById(id)
     .populate('userId', 'fullName email')
     .populate('items.productId', 'name price')
+    .populate('voucherId', 'code')
     .lean();
 };
 

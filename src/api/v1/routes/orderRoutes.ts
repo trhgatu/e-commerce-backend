@@ -7,11 +7,18 @@ import {
   updateOrderStatusSchema,
 } from '../validators/orderValidator';
 import { protect } from '../middlewares/authMiddleware';
+import { createLog } from '../middlewares/logMiddleware';
+import { LogAction } from '../models/logModel';
 
 
 const router = Router();
 
-router.post('/create', protect, validate(createOrderSchema), orderController.createOrder);
+router.post('/create',
+  protect,
+  validate(createOrderSchema),
+  createLog(LogAction.CREATE, 'Order'),
+  orderController.createOrder
+);
 
 router.get('/mine', orderController.getMyOrders);
 
