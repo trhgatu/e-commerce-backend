@@ -16,6 +16,9 @@ export interface IBrand extends Document {
   createdAt?: Date;
   updatedAt?: Date;
   isDeleted?: boolean;
+  createdBy: mongoose.Types.ObjectId;
+  updatedBy: mongoose.Types.ObjectId;
+  deletedBy: mongoose.Types.ObjectId;
 }
 
 const brandSchema = new Schema<IBrand>(
@@ -31,7 +34,10 @@ const brandSchema = new Schema<IBrand>(
       required: true,
     },
 
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
