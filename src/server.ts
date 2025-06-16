@@ -20,7 +20,7 @@ const startServer = async () => {
         await connectMongoDB();
          if (!redisClient.isOpen) {
             await redisClient.connect();
-            console.log("✅ Connected to Redis Cloud");
+            console.log("Connected to Redis Cloud");
         }
 
         const corsOptions = {

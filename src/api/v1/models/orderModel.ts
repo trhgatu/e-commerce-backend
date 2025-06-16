@@ -41,7 +41,10 @@ export interface IOrder extends Document {
   };
   createdAt: Date;
   updatedAt: Date;
-  isDeleted: boolean
+  isDeleted: boolean;
+  createdBy: mongoose.Types.ObjectId;
+  updatedBy: mongoose.Types.ObjectId;
+  deletedBy: mongoose.Types.ObjectId;
 }
 
 const orderSchema: Schema<IOrder> = new Schema(
@@ -83,7 +86,10 @@ const orderSchema: Schema<IOrder> = new Schema(
       phone: { type: String, required: true },
       address: { type: String, required: true },
     },
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
