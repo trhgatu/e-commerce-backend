@@ -63,7 +63,7 @@ const orderSchema: Schema<IOrder> = new Schema(
         price: { type: Number, required: true },
       },
     ],
-    total: { type: Number, required: true },
+    total: { type: Number },
     voucherId: { type: Schema.Types.ObjectId, ref: 'Voucher' },
     discount: { type: Number, default: 0 },
     finalTotal: { type: Number },

@@ -1,5 +1,6 @@
 // src/services/orderService.ts
 import OrderModel, { IOrder, OrderStatus, PaymentStatus } from '../models/orderModel';
+import { IProduct } from '../models/productModel';
 import { validateVoucherUsage, increaseVoucherUsage } from './voucherService';
 import { CreateOrderInput } from '../types/order/orderDTO';
 import InventoryModel from '../models/inventoryModel';
@@ -14,30 +15,39 @@ export const createOrder = async (
   session.startTransaction();
 
   try {
-    const { items, voucherCode, total } = data;
+    const { items, voucherCode } = data;
 
     if (!items || items.length === 0) {
       throw new Error('Đơn hàng phải có ít nhất 1 sản phẩm');
     }
 
     // 1. Trừ tồn kho
+    let calculatedTotal = 0;
+
     for (const item of items) {
-      const inventory = await InventoryModel.findById(item.inventoryId).session(session);
+      const inventory = await InventoryModel.findById(item.inventoryId)
+        .populate<{ productId: IProduct }>('productId')
+        .session(session);
 
       if (!inventory || inventory.quantity < item.quantity) {
         throw new Error(`Không đủ tồn kho cho sản phẩm ${item.productId}`);
       }
+      const product = inventory.productId;
+      const productPrice = product.price;
+      item.price = productPrice;
+      calculatedTotal += productPrice * item.quantity;
 
       inventory.quantity -= item.quantity;
       await inventory.save({ session });
     }
+
 
     // 2. Xử lý voucher (nếu có)
     if (voucherCode) {
       const { discount, finalTotal, voucher } = await validateVoucherUsage(
         voucherCode,
         userId,
-        total || 0
+        calculatedTotal || 0
       );
 
       data.voucherId = voucher._id;
@@ -45,10 +55,11 @@ export const createOrder = async (
       data.finalTotal = finalTotal;
     } else {
       data.discount = 0;
-      data.finalTotal = total;
+      data.finalTotal = calculatedTotal;
     }
 
     // 3. Gán createdBy rõ ràng
+    data.userId = userId;
     data.createdBy = userId;
 
     // 4. Tạo đơn hàng

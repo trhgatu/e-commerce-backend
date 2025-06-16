@@ -17,10 +17,9 @@ export interface ShippingInfoInput {
 }
 
 export interface CreateOrderInput {
-  userId: mongoose.Types.ObjectId | string;
   items: OrderItemInput[];
-  total: number;
-
+  total?: number;
+  userId?: mongoose.Types.ObjectId | string;
   voucherCode?: string;
   voucherId?: mongoose.Types.ObjectId;
   discount?: number;

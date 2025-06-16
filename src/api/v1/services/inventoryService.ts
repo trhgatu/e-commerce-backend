@@ -37,7 +37,7 @@ export const getAllInventories = async (
     filters,
     sort,
     [
-      { path: 'productId', select: 'name' },
+      { path: 'productId', select: 'name price' },
       { path: 'colorId', select: 'name hexCode' }
     ]
   );

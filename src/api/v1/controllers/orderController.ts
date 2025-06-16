@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import * as orderService from '../services/orderService';
 import { handleError } from '../utils/handleError';
-import mongoose from 'mongoose';
 
 const controller = {
     createOrder: async (req: Request, res: Response) => {
@@ -9,18 +8,20 @@ const controller = {
             const userId = req.user?._id;
             if (!userId) throw new Error('User not authenticated');
 
-            const { items, shippingInfo, paymentMethod, total, voucherCode } = req.body;
+            const { items, shippingInfo, paymentMethod, voucherCode } = req.body;
 
-            const order = await orderService.createOrder({
-                userId: new mongoose.Types.ObjectId(userId),
-                items,
-                shippingInfo,
-                paymentMethod,
-                total,
-                voucherCode,
-            });
+            const order = await orderService.createOrder(
+                {
+                    items,
+                    shippingInfo,
+                    paymentMethod,
+                    voucherCode,
+                },
+                userId
+            );
             res.locals.targetId = order._id?.toString() || '';
             res.locals.description = `Created order: ${order._id}`;
+
             res.status(201).json({
                 success: true,
                 code: 201,
