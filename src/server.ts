@@ -29,7 +29,7 @@ const startServer = async () => {
             allowedHeaders: ["Content-Type", "Authorization"],
         };
         app.use(cors(corsOptions));
-        app.use(bodyParser.urlencoded({ extended: false }));
+        app.use(express.urlencoded({ extended: true }));
         app.use(express.json());
         app.use(cookieParser());
 
