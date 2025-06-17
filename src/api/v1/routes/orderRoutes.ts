@@ -39,6 +39,8 @@ router.put('/payment/:id',
   controller.updatePaymentStatus
 );
 
+router.post('/checkout', protect, controller.checkoutFromCart);
+
 router.put('/cancel/:id', controller.cancelOrder);
 
 export default router;

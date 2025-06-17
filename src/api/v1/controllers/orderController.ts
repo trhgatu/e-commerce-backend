@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
 import * as orderService from '../services/orderService';
+import * as cartService from '../services/cartService'
 import { handleError } from '../utils/handleError';
 import { buildCommonQuery } from '../utils/buildCommonQuery';
+import { checkoutCartToOrder } from '../services/cartToOrderService';
+
 const controller = {
     getAllOrders: async (req: Request, res: Response) => {
         try {
@@ -26,6 +29,36 @@ const controller = {
             });
         } catch (error) {
             handleError(res, error, 'Failed to fetch products', 400);
+        }
+    },
+    checkoutFromCart: async (req: Request, res: Response) => {
+        try {
+            const userId = req.user?._id;
+            if (!userId) {
+                res.status(401).json({ message: 'Unauthorized' });
+                return;
+            }
+
+            const { shippingInfo, paymentMethod, voucherCode } = req.body;
+
+            if (!shippingInfo || !paymentMethod) {
+                res.status(400).json({ message: 'Missing shipping or payment method' });
+                return;
+            }
+
+            const orderInput = await checkoutCartToOrder(
+                userId,
+                paymentMethod,
+                shippingInfo,
+                voucherCode
+            );
+
+            const order = await orderService.createOrder(orderInput, userId);
+            await cartService.clearCart(userId);
+
+            res.status(201).json({ success: true, data: order });
+        } catch (error) {
+            handleError(res, error, 'Failed to check out from cart', 400);
         }
     },
     createOrder: async (req: Request, res: Response) => {
