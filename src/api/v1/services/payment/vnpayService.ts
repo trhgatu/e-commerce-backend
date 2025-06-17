@@ -54,11 +54,6 @@ export const createVnpayPaymentUrl = (
     encode: true,
     format: 'RFC1738',
   })}`;
-  console.log('[SIGNING PARAMS]', sortedParams);
-  console.log('[SIGNDATA]', signData);
-  console.log('[SIGNED HASH]', signed);
-  console.log('[FINAL URL]', paymentUrl);
-
   return paymentUrl;
 };
 
@@ -76,11 +71,6 @@ export const verifyVnpayReturn = (query: any): boolean => {
 
   const hmac = crypto.createHmac('sha512', vnp_HashSecret.trim());
   const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
-
-    console.log('[VERIFY] SignData:', signData);
-    console.log('[VERIFY] Received:', receivedSecureHash);
-    console.log('[VERIFY] Signed  :', signed);
-    console.log('[RETURN PARAMS]', query);
   return receivedSecureHash === signed;
 };
 
