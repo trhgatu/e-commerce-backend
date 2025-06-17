@@ -1,5 +1,5 @@
 export interface VnpayCreateUrlInput {
-  amount: number;
+  txnRef: string;
   bankCode?: string;
   ipAddr?: string;
 }

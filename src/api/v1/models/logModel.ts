@@ -11,7 +11,7 @@ export enum LogAction {
 }
 
 export interface ILog extends Document {
-  userId: mongoose.Types.ObjectId;
+  userId: string;
   targetModel: string;
   targetId: mongoose.Types.ObjectId;
   action: LogAction;
@@ -22,9 +22,9 @@ export interface ILog extends Document {
 
 const logSchema = new Schema<ILog>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: { type: String, ref: 'User', required: true },
     targetModel: { type: String, required: true },
-    targetId: { type: Schema.Types.ObjectId, required: true },
+    targetId: { type: Schema.Types.Mixed, required: true },
     action: {
       type: String,
       enum: Object.values(LogAction),

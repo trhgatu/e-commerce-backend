@@ -10,6 +10,7 @@ export enum OrderStatus {
 
 export enum PaymentStatus {
   UNPAID = 'unpaid',
+  FAILED = 'failed',
   PAID = 'paid',
   REFUNDED = 'refunded'
 }
@@ -42,6 +43,8 @@ export interface IOrder extends Document {
   voucherId?: mongoose.Types.ObjectId;
   discount?: number;
   finalTotal?: number;
+  txnRef: string;
+
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
@@ -91,10 +94,14 @@ const orderSchema: Schema<IOrder> = new Schema(
       phone: { type: String, required: true },
       address: { type: String, required: true },
     },
-
+    txnRef: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     isDeleted: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Schema.Types.Mixed, ref: 'User' },
     deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }

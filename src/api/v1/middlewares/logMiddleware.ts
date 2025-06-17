@@ -6,20 +6,21 @@ import { LogAction } from '../models/logModel';
 export const createLog = (action: LogAction, targetModel: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     res.on('finish', async () => {
-      console.log('[LOG] res.locals:', res.locals);
-      if (res.statusCode >= 200 && res.statusCode < 300 && req.user) {
-        const targetId = req.params.id || res.locals.targetId;
+      const isSuccessful = res.statusCode >= 200 && res.statusCode < 300;
+
+      if (isSuccessful && req.user) {
+        const targetId = req.params.id || (res.locals.targetId as string) || 'unknown';
 
         await logAction({
-          userId: req.user._id,
+          userId: req.user._id.toString(),
           targetModel,
           targetId,
           action,
           description: `${req.user.fullName} performed ${action} on ${targetModel} ${targetId}`,
           metadata: {
-            body: req.body,
             method: req.method,
             url: req.originalUrl,
+            body: req.body,
           },
         });
       }

@@ -103,7 +103,10 @@ export const createOrder = async (
     data.userId = userId;
     data.createdBy = userId;
 
-    const order = new OrderModel(data);
+    const order = new OrderModel({
+      ...data,
+      txnRef: new mongoose.Types.ObjectId().toString()
+    });
     const saved = await order.save({ session });
 
     if (voucherCode && data.voucherId) {
@@ -158,8 +161,8 @@ export const updatePaymentStatus = async (
   paymentStatus: PaymentStatus,
   userId: string
 ): Promise<IOrder | null> => {
-  const updated = await OrderModel.findByIdAndUpdate(
-    id,
+  const updated = await OrderModel.findOneAndUpdate(
+    { txnRef: id },
     { paymentStatus, updatedBy: userId },
     { new: true }
   ).lean();
