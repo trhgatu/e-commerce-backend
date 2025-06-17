@@ -2,6 +2,7 @@
 import OrderModel, { IOrder, OrderStatus, PaymentStatus } from '../models/orderModel';
 import { IProduct } from '../models/productModel';
 import { getCache, setCache } from './redisService';
+import { mergeDuplicateItems } from '../utils/mergeDuplicateItems';
 import { validateVoucherUsage, increaseVoucherUsage } from './voucherService';
 import { CreateOrderInput } from '../types/order/orderDTO';
 import InventoryModel from '../models/inventoryModel';
@@ -57,9 +58,14 @@ export const createOrder = async (
       throw new Error('Đơn hàng phải có ít nhất 1 sản phẩm');
     }
 
+    const mergedItems = mergeDuplicateItems(items);
+    if (items.length !== mergedItems.length) {
+      console.log(`[OrderService] Merged duplicate items: ${items.length} → ${mergedItems.length}`);
+    }
+
     let calculatedTotal = 0;
 
-    for (const item of items) {
+    for (const item of mergedItems) {
       const inventory = await InventoryModel.findById(item.inventoryId)
         .populate<{ productId: IProduct }>('productId')
         .session(session);
@@ -67,8 +73,10 @@ export const createOrder = async (
       if (!inventory || inventory.quantity < item.quantity) {
         throw new Error(`Không đủ tồn kho cho sản phẩm ${item.productId}`);
       }
+
       const product = inventory.productId;
       const productPrice = product.price;
+
       item.price = productPrice;
       calculatedTotal += productPrice * item.quantity;
 
@@ -76,7 +84,7 @@ export const createOrder = async (
       await inventory.save({ session });
     }
 
-
+    data.items = mergedItems;
     if (voucherCode) {
       const { discount, finalTotal, voucher } = await validateVoucherUsage(
         voucherCode,
