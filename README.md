@@ -120,8 +120,8 @@ src/
 ## 📚 API Documentation
 
 Available at:
-📎 Local: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
-📎 Public Docs: [https://e-commerce-backend-v4nu.onrender.com/api-docs](https://e-commerce-backend-v4nu.onrender.com/api-docs)
+- 📎 Local: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
+- 📎 Public Docs: [https://e-commerce-backend-v4nu.onrender.com/api-docs](https://e-commerce-backend-v4nu.onrender.com/api-docs)
 
 Powered by `swagger-jsdoc` & `swagger-ui-express`. Each module includes its own swagger spec inside `/docs`.
 
@@ -129,9 +129,12 @@ Powered by `swagger-jsdoc` & `swagger-ui-express`. Each module includes its own 
 
 ## 🛠️ CI/CD & Render Deployment
 
-🔁 Auto-deploy on push via Render
-🟢 No config needed – just push code to GitHub
-✅ Status: LIVE — auto-builds & runs on push
+- 🔁 Auto-deploy on push via Render
+- 🟢 No config needed – just push code to GitHub
+- ✅ Status: LIVE — auto-builds & runs on push
+
+---
+
 
 ## 🧠 Design Guidelines
 
