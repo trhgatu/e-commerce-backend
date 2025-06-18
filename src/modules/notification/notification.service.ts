@@ -1,4 +1,6 @@
-import NotificationModel, { INotification } from './notification.model';
+import mongoose from 'mongoose';
+import NotificationModel, { INotification, NotificationType } from './notification.model';
+import { emitNotification } from '@socket/notification.handler';
 import { paginate } from '@common/utils';
 import {
   getCache,
@@ -81,4 +83,24 @@ export const createNotification = async (
 
   await deleteKeysByPattern(`notifications:${data.userId}:*`);
   return saved;
+};
+
+export const createAndEmitNotification = async (
+  userId: string,
+  data: {
+    title: string;
+    content: string;
+    type: NotificationType;
+    metadata?: Record<string, any>;
+  }
+): Promise<INotification> => {
+  const notif = await createNotification(
+    {
+      ...data, userId:
+        new mongoose.Types.ObjectId(userId),
+    }
+  );
+
+  emitNotification(userId.toString(), data);
+  return notif;
 };
