@@ -16,6 +16,8 @@ import {
 } from '@modules/voucher/voucher.service';
 import { CreateOrderInput } from './dtos/order-input.dto';
 import InventoryModel from '@modules/inventory/inventory.model'
+import { createAndEmitNotification } from '@modules/notification/notification.service';
+import { NotificationType } from '@modules/notification/notification.model';
 
 export const getAllOrders = async (
     page: number,
@@ -51,6 +53,7 @@ export const getAllOrders = async (
     await setCache(cacheKey, result);
     return result;
 };
+
 export const createOrder = async (
     data: CreateOrderInput,
     userId: string
@@ -98,7 +101,6 @@ export const createOrder = async (
                 userId,
                 calculatedTotal || 0
             );
-
             data.voucherId = voucher._id;
             data.discount = discount;
             data.finalTotal = finalTotal;
@@ -115,6 +117,13 @@ export const createOrder = async (
             txnRef: new mongoose.Types.ObjectId().toString()
         });
         const saved = await order.save({ session });
+
+        await createAndEmitNotification(userId, {
+            title: 'Đặt hàng thành công.',
+            content: `Đơn hàng #${saved.txnRef} đã được tạo thành công.`,
+            type: NotificationType.ORDER,
+            metadata: { orderId: saved._id },
+        });
 
         if (voucherCode && data.voucherId) {
             await increaseVoucherUsage(data.voucherId.toString(), userId);

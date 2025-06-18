@@ -10,6 +10,7 @@ export const emitNotification = (
     metadata?: Record<string, any>;
   }
 ) => {
+  console.log(`📡 Emitting noti to user ${userId}:`, data);
   getIO().to(userId).emit('notification:new', data);
 };
 
