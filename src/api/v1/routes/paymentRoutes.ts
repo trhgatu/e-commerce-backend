@@ -14,6 +14,9 @@ router.post('/vnpay/create-payment-url',
 );
 router.get('/vnpay/return', controller.handleReturnUrl);
 
+router.get('/vnpay/vnpay-ipn', controller.handleIpnUrl);
+
+
 //Payment with MOMO (coming)
 
 export default router;

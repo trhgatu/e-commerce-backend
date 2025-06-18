@@ -8,6 +8,7 @@ export enum LogAction {
   LOGIN = 'login',
   LOGOUT = 'logout',
   CUSTOM = 'custom',
+  READ = 'read'
 }
 
 export interface ILog extends Document {

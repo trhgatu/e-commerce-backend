@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createVnpayPaymentUrl, handleVnpayReturn } from '../../services/payment/vnpayService';
+import { createVnpayPaymentUrl, handleVnpayReturn, handleVnpayIpn } from '../../services/payment/vnpayService';
 import { VnpayCreateUrlInput } from '../../types/payment/vnpayDTO';
 import { handleError } from '../../utils';
 
@@ -33,6 +33,16 @@ const vnpayController = {
       handleError(res, error, 'Failed to verify VNPAY return URL', 400);
     }
   },
+
+  handleIpnUrl: async (req: Request, res: Response) => {
+    try {
+      await handleVnpayIpn(req.query);
+      res.status(200).send('IPN received');
+    } catch (error) {
+      console.error('[VNPAY IPN error]', error);
+      res.status(400).send('IPN failed');
+    }
+  }
 };
 
 export default vnpayController;

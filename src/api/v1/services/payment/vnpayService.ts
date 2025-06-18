@@ -21,7 +21,7 @@ export const createVnpayPaymentUrl = async (
   const { txnRef, bankCode, ipAddr } = payload;
   const order = await OrderModel.findOne({ txnRef }).lean();
 
-  if(!order) {
+  if (!order) {
     throw new Error('Order not found');
   }
   if (order.paymentStatus !== 'unpaid') {
@@ -100,24 +100,57 @@ export const handleVnpayReturn = async (query: any) => {
 
   const status = vnp_ResponseCode === '00' ? PaymentStatus.PAID : PaymentStatus.FAILED;
 
-  const updatedOrder = await updatePaymentStatus(orderId, status, 'vnpay-system');
-  if (!updatedOrder) throw new Error('Order not found or update failed');
+  const order = await OrderModel.findOne({ txnRef: orderId });
+  if (!order) throw new Error('Order not found');
 
   await logAction({
     userId: 'vnpay-system',
     targetModel: 'Payment',
+    targetId: String(order._id),
+    action: LogAction.READ,
+    description: `User returned from VNPAY with ${status.toUpperCase()} for txnRef ${orderId}`,
+    metadata: query,
+  });
+
+  return {
+    status: order.paymentStatus,
+    orderId,
+    message: order.paymentStatus === PaymentStatus.PAID
+      ? 'Payment successful'
+      : 'Waiting for confirmation',
+  };
+};
+
+
+export const handleVnpayIpn = async (query: any) => {
+  const isValid = verifyVnpayReturn({ ...query });
+
+  if (!isValid) throw new Error('Invalid VNPAY signature');
+
+  const orderId = query['vnp_TxnRef'];
+  const vnp_ResponseCode = query['vnp_ResponseCode'];
+
+  const status = vnp_ResponseCode === '00' ? PaymentStatus.PAID : PaymentStatus.FAILED;
+
+  const updatedOrder = await updatePaymentStatus(orderId, status, 'vnpay-ipn');
+  if (!updatedOrder) throw new Error('Order not found or update failed');
+
+  await logAction({
+    userId: 'vnpay-ipn',
+    targetModel: 'Payment',
     targetId: String(updatedOrder._id),
     action: LogAction.UPDATE,
-    description: `VNPAY returned ${status.toUpperCase()} for txnRef ${orderId}`,
+    description: `VNPAY IPN returned ${status.toUpperCase()} for txnRef ${orderId}`,
     metadata: query,
   });
 
   return {
     status,
     orderId,
-    message: status === PaymentStatus.PAID ? 'Payment successful' : 'Payment failed',
+    message: status === PaymentStatus.PAID ? 'Payment successful (IPN)' : 'Payment failed (IPN)',
   };
 };
+
 
 function sortObject(obj: Record<string, any>) {
   const sorted: Record<string, any> = {};
