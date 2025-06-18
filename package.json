@@ -4,8 +4,8 @@
     "main": "dist/server.js",
     "scripts": {
         "build": "tsc",
-        "start": "node dist/server.js",
-        "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+        "start": "node -r module-alias/register dist/server.js",
+        "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts"
     },
     "keywords": [],
     "author": "",
@@ -22,6 +22,7 @@
         "express-rate-limit": "^7.5.0",
         "helmet": "^8.1.0",
         "jsonwebtoken": "^9.0.2",
+        "module-alias": "^2.2.3",
         "mongoose": "^8.13.3",
         "multer": "^2.0.0",
         "mysql2": "^3.14.0",
@@ -50,6 +51,17 @@
         "ts-jest": "^29.3.2",
         "ts-node": "^10.9.2",
         "ts-node-dev": "^2.0.0",
+        "tsconfig-paths": "^4.2.0",
         "typescript": "^5.8.3"
+    },
+    "_moduleAliases": {
+        "@config": "dist/config",
+        "@middlewares": "dist/middlewares",
+        "@common": "dist/common",
+        "@modules": "dist/modules",
+        "@routes": "dist/routes",
+        "@types": "dist/types",
+        "@shared": "dist/shared",
+        "@usecases": "dist/shared/usecases"
     }
 }

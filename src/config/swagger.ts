@@ -1,3 +1,5 @@
+// src/config/swagger.ts
+
 import swaggerJSDoc from 'swagger-jsdoc';
 import dotenv from 'dotenv';
 
@@ -13,7 +15,6 @@ const servers = [
 ];
 
 if (!isDev) {
-  // Optionally add local server for reference in non-dev environments
   servers.push({
     url: 'http://localhost:5000/api/v1',
     description: 'Local Development Server (Reference)',
@@ -29,12 +30,13 @@ const options = {
       description: 'API Documentation for E-Commerce Backend',
     },
     servers,
-    paths: {},
   },
-  apis: ['src/api/v1/routes/**/*.ts',
-    'src/api/v1/controllers/**/*.ts',
-    'src/models/**/*.ts',
-    'src/api/v1/docs/**/*.ts'
+  apis: [
+    'src/modules/**/*.controller.ts',
+    'src/modules/**/*.routes.ts',
+    'src/modules/**/docs/*.swagger.ts',
+    'src/common/models/**/*.ts',
+    'src/docs/**/*.ts',
   ],
 };
 

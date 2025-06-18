@@ -1,10 +1,11 @@
+import 'module-alias/register';
 import express from 'express';
 import { createServer } from 'http';
 import { connectMongoDB } from './config/database';
 import dotenv from 'dotenv';
 import bodyParser from "body-parser";
 import cors from 'cors';
-import applyRoutes from './api/v1/routes';
+import applyRoutes from '@routes/index.route'
 import cookieParser from 'cookie-parser';
 import redisClient from './config/redis';
 import swaggerUi from 'swagger-ui-express';

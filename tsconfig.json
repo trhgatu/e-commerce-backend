@@ -8,10 +8,45 @@
     "strict": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@config/*": [
+        "config/*"
+      ],
+      "@middlewares/*": [
+        "middlewares/*"
+      ],
+      "@middlewares": [
+        "middlewares/index.ts"
+      ],
+      "@common/*": [
+        "common/*"
+      ],
+      "@common/utils": [
+        "common/utils/index.ts"
+      ],
+      "@modules/*": [
+        "modules/*"
+      ],
+      "@routes/*": [
+        "routes/*"
+      ],
+      "@types/*": [
+        "types/*"
+      ],
+      "@shared/*": [
+        "shared/*"
+      ],
+      "@usecases/*": [
+        "shared/usecases/*"
+      ]
+    },
     "typeRoots": [
       "./src/types",
       "./node_modules/@types"
     ]
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }
