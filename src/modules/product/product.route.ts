@@ -3,8 +3,12 @@ import controller from './product.controller';
 import { createProductSchema, updateProductSchema } from './product.validator';
 import { LogAction } from '@common/models';
 import { protect, validate, createLog } from '@middlewares';
+import { emitNotification } from '@socket/notification.handler';
+import { NotificationType } from '@modules/notification/notification.model';
 
 const router = express.Router();
+
+
 
 router.get('/', controller.getAllProducts);
 

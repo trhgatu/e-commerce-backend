@@ -37,6 +37,12 @@
       "@shared/*": [
         "shared/*"
       ],
+      "@socket": [
+        "socket/index.ts"
+      ],
+      "@socket/*": [
+        "socket/*"
+      ],
       "@usecases/*": [
         "shared/usecases/*"
       ]

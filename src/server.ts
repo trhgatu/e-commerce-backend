@@ -2,6 +2,7 @@ import 'module-alias/register';
 import express from 'express';
 import { createServer } from 'http';
 import { connectMongoDB } from './config/database';
+import { initSocketServer } from '@socket';
 import dotenv from 'dotenv';
 import bodyParser from "body-parser";
 import cors from 'cors';
@@ -19,7 +20,7 @@ const port = process.env.PORT;
 const startServer = async () => {
     try {
         await connectMongoDB();
-         if (!redisClient.isOpen) {
+        if (!redisClient.isOpen) {
             await redisClient.connect();
             console.log("Connected to Redis Cloud");
         }
@@ -40,12 +41,14 @@ const startServer = async () => {
         applyRoutes(app);
 
         const httpServer = createServer(app);
+        //Socket init
+        initSocketServer(httpServer);
 
         httpServer.listen(port, () => {
             console.log(`Backend đang chạy trên cổng ${port}`);
         });
 
-    } catch(error) {
+    } catch (error) {
         console.error('Lỗi khi kết nối cơ sở dữ liệu:', error);
     }
 };
