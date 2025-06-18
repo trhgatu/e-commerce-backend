@@ -76,9 +76,13 @@ export const markAllAsRead = async (
 };
 
 export const createNotification = async (
+  userId: string,
   data: Partial<INotification>
 ): Promise<INotification> => {
-  const notif = new NotificationModel(data);
+  const notif = new NotificationModel({
+    ...data,
+    createdBy: userId
+  });
   const saved = await notif.save();
 
   await deleteKeysByPattern(`notifications:${data.userId}:*`);
@@ -94,13 +98,12 @@ export const createAndEmitNotification = async (
     metadata?: Record<string, any>;
   }
 ): Promise<INotification> => {
-  const notif = await createNotification(
-    {
-      ...data, userId:
-        new mongoose.Types.ObjectId(userId),
-    }
-  );
-
+  const notif = new NotificationModel({
+    ...data,
+    userId,
+    createdBy: userId
+  });
+  const saved = await notif.save();
   emitNotification(userId.toString(), data);
-  return notif;
+  return saved;
 };

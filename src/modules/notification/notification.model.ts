@@ -16,6 +16,7 @@ export interface INotification extends Document {
   isRead: boolean;
   createdAt: Date;
   updatedAt: Date;
+  createdBy: mongoose.Types.ObjectId
 }
 
 const notificationSchema = new Schema<INotification>(
@@ -30,6 +31,7 @@ const notificationSchema = new Schema<INotification>(
       required: true,
     },
     isRead: { type: Boolean, default: false },
+    createdBy: { type: Schema.Types.ObjectId }
   },
   { timestamps: true }
 );

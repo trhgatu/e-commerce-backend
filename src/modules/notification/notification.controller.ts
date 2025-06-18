@@ -78,7 +78,9 @@ const controller = {
 
     createNotification: async (req: Request, res: Response) => {
         try {
-            const notif = await notificationService.createNotification(req.body);
+            const userId = req.user?._id;
+            if (!userId) throw new Error('User ID is missing from request');
+            const notif = await notificationService.createNotification(req.body, userId);
 
             res.locals.targetId = notif._id?.toString();
             res.locals.description = `Created notification: ${notif.title}`;
