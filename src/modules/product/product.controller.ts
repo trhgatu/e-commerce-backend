@@ -153,7 +153,10 @@ const controller = {
   },
   restoreProduct: async (req: Request, res: Response) => {
     try {
+      const userId = req.user?._id;
+      if (!userId) throw new Error('User ID is missing from request');
       const product = await productService.restoreProduct(req.params.id);
+
       if (!product) {
         res.status(404).json({
           success: false,
@@ -162,6 +165,8 @@ const controller = {
         });
         return;
       }
+      res.locals.targetId = product._id?.toString();
+      res.locals.description = `Restored product: ${product.name}`
 
       res.status(200).json({
         success: true,

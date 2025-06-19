@@ -3,12 +3,8 @@ import controller from './product.controller';
 import { createProductSchema, updateProductSchema } from './product.validator';
 import { LogAction } from '@common/models';
 import { protect, validate, createLog } from '@middlewares';
-import { emitNotification } from '@socket/notification.handler';
-import { NotificationType } from '@modules/notification/notification.model';
 
 const router = express.Router();
-
-
 
 router.get('/', controller.getAllProducts);
 
@@ -21,7 +17,6 @@ router.post(
   createLog(LogAction.CREATE, 'Product'),
   controller.createProduct,
 );
-
 
 router.put(
   '/update/:id',
@@ -40,6 +35,10 @@ router.delete(
   controller.softDeleteProduct
 );
 
-router.put('/restore/:id', controller.restoreProduct);
+router.put('/restore/:id',
+  protect,
+  createLog(LogAction.RESTORE, 'Product'),
+  controller.restoreProduct
+);
 
 export default router;
