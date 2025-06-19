@@ -45,8 +45,14 @@ export const getBrandById = async (id: string): Promise<IBrand | null> => {
   return brand;
 };
 
-export const createBrand = async (data: Partial<IBrand>): Promise<IBrand> => {
-  const brand = new BrandModel(data);
+export const createBrand = async (
+  data: Partial<IBrand>,
+  userId: string
+): Promise<IBrand> => {
+  const brand = new BrandModel({
+    ...data,
+    createdBy: userId
+  });
   const saved = await brand.save();
 
   await deleteKeysByPattern('brands:*');
@@ -56,9 +62,17 @@ export const createBrand = async (data: Partial<IBrand>): Promise<IBrand> => {
 
 export const updateBrand = async (
   id: string,
-  data: Partial<IBrand>
+  data: Partial<IBrand>,
+  userId: string
 ): Promise<IBrand | null> => {
-  const updated = await BrandModel.findByIdAndUpdate(id, data, { new: true }).lean();
+  const updated = await BrandModel.findByIdAndUpdate(
+    id,
+    {
+      ...data,
+      updatedBy: userId
+    },
+    { new: true }
+  ).lean();
 
   await deleteCache(`brand:${id}`);
   await deleteKeysByPattern('brands:*');

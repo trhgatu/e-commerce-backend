@@ -20,7 +20,8 @@ router.post(
     protect,
     validate(createCategorySchema),
     createLog(LogAction.CREATE, 'Category'),
-    controller.createCategory);
+    controller.createCategory
+);
 
 router.put(
     '/update/:id',

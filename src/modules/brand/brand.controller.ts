@@ -8,7 +8,7 @@ const controller = {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
-            const {filters, sort } = buildCommonQuery(req, ["name"])
+            const { filters, sort } = buildCommonQuery(req, ["name"])
 
             const result = await brandService.getAllBrands(
                 page,
@@ -57,9 +57,13 @@ const controller = {
     // Create new brand
     createBrand: async (req: Request, res: Response) => {
         try {
+            const userId = req.user?._id;
+            if (!userId) throw new Error('User ID is missing from request');
             const brandData = req.body;
-            console.log(brandData)
-            const brand = await brandService.createBrand(brandData);
+            const brand = await brandService.createBrand(brandData, userId);
+
+            res.locals.targetId = brand._id?.toString() || '';
+            res.locals.description = `Created brand: ${brand.name}`;
 
             res.status(201).json({
                 success: true,
@@ -75,8 +79,12 @@ const controller = {
     // Update brand
     updateBrand: async (req: Request, res: Response) => {
         try {
+            const userId = req.user?._id;
+            if (!userId) throw new Error('User ID is missing from request');
             const brandData = req.body;
-            const brand = await brandService.updateBrand(req.params.id, brandData);
+            const brand = await brandService.updateBrand(req.params.id, brandData, userId);
+
+
 
             if (!brand) {
                 res.status(404).json({
@@ -86,6 +94,9 @@ const controller = {
                 });
                 return;
             }
+
+            res.locals.targetId = brand._id?.toString() || '';
+            res.locals.description = `Updated brand: ${brand.name}`;
 
             res.status(200).json({
                 success: true,
