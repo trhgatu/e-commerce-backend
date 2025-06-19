@@ -11,7 +11,8 @@ export enum LogAction {
   LOGOUT = 'logout',
   CUSTOM = 'custom',
   READ = 'read',
-  READ_ALL = 'read-all'
+  READ_ALL = 'read-all',
+  ASSIGN_PERMISSION = 'assign-permission',
 }
 
 export interface ILog extends Document {

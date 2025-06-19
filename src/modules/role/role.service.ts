@@ -65,9 +65,13 @@ export const getRoleById = async (id: string): Promise<IRole | null> => {
 
 
 export const createRole = async (
-  data: Partial<IRole>
+  data: Partial<IRole>,
+  userId: string
 ): Promise<IRole> => {
-  const role = new RoleModel(data);
+  const role = new RoleModel({
+    ...data,
+    createdBy: userId
+  });
   const saved = await role.save();
 
   await deleteKeysByPattern('roles:*');
@@ -78,11 +82,17 @@ export const createRole = async (
 // Update Role + invalidate cả danh sách & chi tiết
 export const updateRole = async (
   id: string,
-  data: Partial<IRole>
+  data: Partial<IRole>,
+  userId: string
 ): Promise<IRole | null> => {
-  const updated = await RoleModel.findByIdAndUpdate(id, data, {
-    new: true,
-  }).lean();
+  const updated = await RoleModel.findByIdAndUpdate(
+    id,
+    {
+      ...data,
+      updatedBy: userId
+    },
+    { new: true })
+    .lean();
 
   await deleteCache(`role:${id}`);
   await deleteKeysByPattern('roles:*');

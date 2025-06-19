@@ -53,8 +53,14 @@ const controller = {
 
   createRole: async (req: Request, res: Response) => {
     try {
+      const userId = req.user?._id;
+      if (!userId) throw new Error('User ID is missing from request');
       const roleData = req.body;
-      const role = await roleService.createRole(roleData);
+      const role = await roleService.createRole(roleData, userId);
+
+      res.locals.targetId = role._id?.toString() || '';
+      res.locals.description = `Created Role: ${role.name}`;
+
       res.status(201).json({
         success: true,
         code: 201,
@@ -68,8 +74,10 @@ const controller = {
 
   updateRole: async (req: Request, res: Response) => {
     try {
+      const userId = req.user?._id;
+      if (!userId) throw new Error('User ID is missing from request');
       const roleData = req.body;
-      const role = await roleService.updateRole(req.params.id, roleData);
+      const role = await roleService.updateRole(req.params.id, roleData, userId);
 
       if (!role) {
         res.status(404).json({
@@ -79,7 +87,6 @@ const controller = {
         });
         return;
       }
-
       res.status(200).json({
         success: true,
         code: 200,
