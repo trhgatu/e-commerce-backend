@@ -5,16 +5,20 @@ export enum NotificationType {
   SYSTEM = 'system',
   VOUCHER = 'voucher',
   ADMIN = 'admin',
+  SHIPPING = 'shipping',
+  REVIEW = 'review',
 }
 
 export interface INotification extends Document {
   userId: mongoose.Types.ObjectId;
+  isGlobal: boolean;
   title: string;
   content: string;
   metadata?: Record<string, any>;
   type: NotificationType;
   isRead: boolean;
   createdAt: Date;
+  readAt: Date;
   updatedAt: Date;
   createdBy: mongoose.Types.ObjectId
 }
@@ -22,6 +26,7 @@ export interface INotification extends Document {
 const notificationSchema = new Schema<INotification>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    isGlobal: { type: Boolean, default: false },
     title: { type: String, required: true, trim: true },
     content: { type: String, required: true, trim: true },
     metadata: { type: Object },
@@ -31,6 +36,7 @@ const notificationSchema = new Schema<INotification>(
       required: true,
     },
     isRead: { type: Boolean, default: false },
+    readAt: { type: Date },
     createdBy: { type: Schema.Types.ObjectId }
   },
   { timestamps: true }

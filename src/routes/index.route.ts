@@ -15,7 +15,10 @@ import voucherRoutes from '@modules/voucher/voucher.route'
 import logRoutes from '@modules/log/log.route'
 import addressRoutes from '@modules/address/address.route'
 import paymentRoutes from '@modules/payment/routes/payment.route'
+//socket test route
 import testRoute from '@routes/test.route';
+
+import notificationRoutes from '@modules/notification/notification.route';
 
 const router = (app: Express) => {
     const version = '/api/v1';
@@ -35,6 +38,7 @@ const router = (app: Express) => {
     app.use(version + '/logs', logRoutes);
     app.use(version + '/addresses', addressRoutes);
     app.use(version + '/payments', paymentRoutes);
+    app.use(version + '/notifications', notificationRoutes)
 
     //socket test
     app.use(version + '/test', testRoute);
