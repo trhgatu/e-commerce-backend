@@ -147,7 +147,7 @@ const controller = {
         });
         return;
       }
-res.locals.targetId = category._id?.toString();
+      res.locals.targetId = category._id?.toString();
       res.locals.description = `Deleted category: ${category.name}`
       res.status(200).json({
         success: true,
@@ -160,6 +160,8 @@ res.locals.targetId = category._id?.toString();
   },
   restoreCategory: async (req: Request, res: Response) => {
     try {
+      const userId = req.user?._id;
+      if (!userId) throw new Error('User ID is missing from request');
       const category = await categoryService.restoreCategory(req.params.id);
       if (!category) {
         res.status(404).json({
@@ -169,6 +171,8 @@ res.locals.targetId = category._id?.toString();
         });
         return;
       }
+      res.locals.targetId = category._id?.toString();
+      res.locals.description = `Restored category: ${category.name}`
 
       res.status(200).json({
         success: true,

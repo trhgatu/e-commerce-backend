@@ -40,4 +40,11 @@ router.delete(
     controller.softDeleteCategory
 )
 
+router.put(
+    '/restore/:id',
+    protect,
+    createLog(LogAction.RESTORE, 'Category'),
+    controller.restoreCategory
+)
+
 export default router;
