@@ -24,18 +24,22 @@ const controller = {
     const { identifier, password } = req.body;
 
     try {
-      const result = await authService.login(identifier, password);
+      const user = await authService.login(identifier, password);
+
+      res.locals.targetId = user.user._id.toString();
+      res.locals.description = `User login: ${user.user.email}`;
+
       res.status(200).json({
         success: true,
         code: 200,
         message: 'Login successful',
-        data: result,
+        data: user,
       });
     } catch (error) {
+      console.error('Login failed:', error);
       handleError(res, error, 'Login failed', 401);
     }
   },
-
   logout: async (_req: Request, res: Response) => {
     res.status(200).json({
       success: true,

@@ -6,6 +6,7 @@ export enum LogAction {
   DELETE = 'delete',
   RESTORE = 'restore',
   LOGIN = 'login',
+  REGISTER = 'register',
   LOGOUT = 'logout',
   CUSTOM = 'custom',
   READ = 'read',
