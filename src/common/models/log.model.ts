@@ -7,6 +7,7 @@ export enum LogAction {
   RESTORE = 'restore',
   LOGIN = 'login',
   REGISTER = 'register',
+  UPDATE_PROFILE = 'update-profile',
   LOGOUT = 'logout',
   CUSTOM = 'custom',
   READ = 'read',
