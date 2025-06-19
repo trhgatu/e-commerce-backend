@@ -8,12 +8,16 @@ const controller = {
     const { email, password, fullName } = req.body;
 
     try {
-      const result = await authService.register(email, password, fullName);
+      const user = await authService.register(email, password, fullName);
+
+      res.locals.targetId = user.user._id.toString();
+      res.locals.description = `User register: ${user.user.email}`;
+
       res.status(201).json({
         success: true,
         code: 201,
         message: 'User registered successfully',
-        data: result,
+        data: user,
       });
     } catch (error) {
       handleError(res, error, 'Registration failed', 400);
