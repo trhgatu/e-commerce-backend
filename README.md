@@ -134,7 +134,8 @@ npm start
 
 ## 📘 API Documentation
 
-- Production: [`/api-docs`](https://e-commerce-backend-develop.onrender.com/api-docs)
+- Develop: [`/api-docs`](https://e-commerce-backend-develop.onrender.com/api-docs)
+- Production: [`/api-docs`](https://e-commerce-backend-prod-v1.onrender.com/api-docs)
 - Built with `swagger-jsdoc` + `swagger-ui-express`
 - Each module has `.swagger.ts` for documentation
 
