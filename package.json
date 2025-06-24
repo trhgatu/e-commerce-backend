@@ -63,5 +63,17 @@
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.35.0"
+    },
+    "_moduleAliases": {
+        "@config": "dist/config",
+        "@middlewares": "dist/middlewares",
+        "@common": "dist/common",
+        "@modules": "dist/modules",
+        "@routes": "dist/routes",
+        "@types": "dist/types",
+        "@socket": "dist/socket",
+        "@socket/*": "dist/socket",
+        "@shared": "dist/shared",
+        "@usecases": "dist/shared/usecases"
     }
 }
