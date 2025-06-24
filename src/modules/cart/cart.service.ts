@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 import CartModel, { ICart } from './cart.model';
 import {
-  AddToCartInput,
+  CartItemInput,
   UpdateCartItemInput,
   RemoveFromCartInput
 } from './dtos/cart-input.dto';
 
 export const addToCart = async (
   userId: string,
-  payload: AddToCartInput
+  payload: CartItemInput
 ): Promise<ICart> => {
   const {
     inventoryId,

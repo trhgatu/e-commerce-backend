@@ -17,10 +17,10 @@ const isDev = process.env.NODE_ENV === 'development';
 export const getAllVouchers = async (
     page: number,
     limit: number,
-    filters: Record<string, any> = {},
+    filters: Record<string, unknown> = {},
     sort: Record<string, 1 | -1> = {}
 ) => {
-    const finalFilters: Record<string, any> = {
+    const finalFilters: Record<string, unknown> = {
         isDeleted: false,
         ...filters,
     };

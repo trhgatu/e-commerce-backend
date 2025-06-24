@@ -1,8 +1,8 @@
 import express from 'express';
 import controller from './notification.controller';
 import { LogAction } from '@common/models';
-import { protect, validate, createLog } from '@middlewares';
-import { logAction } from '@common/services/log.service';
+import { protect, /* validate, */ createLog } from '@middlewares';
+/* import { logAction } from '@common/services/log.service'; */
 
 const router = express.Router();
 

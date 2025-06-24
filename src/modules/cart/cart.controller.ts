@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import * as cartService from './cart.service';
 import {
-    AddToCartInput,
+    CartItemInput,
     RemoveFromCartInput,
     UpdateCartItemInput
 } from './dtos/cart-input.dto';
@@ -18,13 +18,14 @@ const controller = {
             const cart = await cartService.getCartByUserId(userId);
             res.json({ success: true, data: cart });
         } catch (err) {
+            console.error(err);
             res.status(500).json({ success: false, message: 'Failed to fetch cart' });
         }
     },
     addToCart: async (req: Request, res: Response) => {
         try {
             const userId = req.user?._id;
-            const payload: AddToCartInput = req.body;
+            const payload: CartItemInput = req.body;
 
             if (!userId || !payload?.inventoryId || !payload?.productId || !payload.quantity) {
                 res.status(400).json({ message: 'Missing required cart data' });
@@ -34,6 +35,7 @@ const controller = {
             const cart = await cartService.addToCart(userId, payload);
             res.status(201).json({ success: true, data: cart });
         } catch (err) {
+            console.error(err);
             res.status(500).json({ success: false, message: 'Failed to add to cart' });
         }
     },
@@ -50,6 +52,7 @@ const controller = {
             const cart = await cartService.updateItemQuantity(userId, payload);
             res.json({ success: true, data: cart });
         } catch (err) {
+            console.error(err);
             res.status(500).json({ success: false, message: 'Failed to update quantity' });
         }
     },
@@ -67,6 +70,7 @@ const controller = {
             const cart = await cartService.removeFromCart(userId, payload);
             res.json({ success: true, data: cart });
         } catch (err) {
+            console.error(err);
             res.status(500).json({ success: false, message: 'Failed to remove item' });
         }
     },
@@ -81,6 +85,7 @@ const controller = {
             const cart = await cartService.clearCart(userId);
             res.json({ success: true, data: cart });
         } catch (err) {
+            console.error(err);
             res.status(500).json({ success: false, message: 'Failed to clear cart' });
         }
     },

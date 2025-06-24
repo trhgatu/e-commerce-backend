@@ -1,4 +1,4 @@
-const { io } = require('socket.io-client');
+import { io } from 'socket.io-client';
 
 const userId = '680e62535466830eba276622'; // thay bằng _id user của mày
 

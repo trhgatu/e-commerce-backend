@@ -21,7 +21,7 @@ export interface ILog extends Document {
   targetId: mongoose.Types.ObjectId;
   action: LogAction;
   description?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
 }
 

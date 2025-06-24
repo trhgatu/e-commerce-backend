@@ -1,7 +1,6 @@
-// src/config/swagger.ts
-
 import swaggerJSDoc from 'swagger-jsdoc';
 import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config();
 
@@ -21,6 +20,8 @@ if (!isDev) {
   });
 }
 
+const basePath = isDev ? './src' : './dist';
+
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -32,11 +33,11 @@ const options = {
     servers,
   },
   apis: [
-    'src/modules/**/*.controller.ts',
-    'src/modules/**/*.routes.ts',
-    'src/modules/**/docs/*.swagger.ts',
-    'src/common/models/**/*.ts',
-    'src/docs/**/*.ts',
+    path.join(basePath, 'modules/**/*.controller.{ts,js}'),
+    path.join(basePath, 'modules/**/*.routes.{ts,js}'),
+    path.join(basePath, 'modules/**/docs/*.{ts,js}'),
+    path.join(basePath, 'common/models/**/*.{ts,js}'),
+    path.join(basePath, 'docs/**/*.{ts,js}'),
   ],
 };
 

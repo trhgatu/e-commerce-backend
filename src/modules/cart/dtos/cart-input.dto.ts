@@ -9,7 +9,6 @@ export interface CartItemInput {
   quantity: number;
 }
 
-export interface AddToCartInput extends CartItemInput {}
 export interface UpdateCartItemInput {
   inventoryId: mongoose.Types.ObjectId | string;
   quantity: number;

@@ -1,7 +1,7 @@
 import { Request } from "express";
 
 export interface CommonQuery {
-  filters: Record<string, any>;
+  filters: Record<string, unknown>;
   sort: Record<string, 1 | -1>;
   keyword?: string;
 }
@@ -10,7 +10,7 @@ export const buildCommonQuery = (
   req: Request,
   searchableFields: string[] = ["name"]
 ): CommonQuery => {
-  const filters: Record<string, any> = {};
+  const filters: Record<string, unknown> = {};
 
   // Filter isDeleted (true/false)
   const isDeleted = req.query.isDeleted;

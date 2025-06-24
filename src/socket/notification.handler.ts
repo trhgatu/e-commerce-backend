@@ -7,14 +7,12 @@ export const emitNotification = (
     title: string;
     content: string;
     type: NotificationType;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }
 ) => {
   console.log(`📡 Emitting noti to user ${userId}:`, data);
   getIO().to(userId).emit('notification:new', data);
 };
-
-// Optionally register listeners here too
-export const registerNotificationHandler = (socket: any) => {
+export const registerNotificationHandler = () => {
   // socket.on('markAllAsReadRealtime', ...)
 };

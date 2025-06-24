@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import qs from 'qs';
 import moment from 'moment';
-import { VnpayCreateUrlInput } from '../dtos/vnpay-input.dto';
+import { VnpayCreateUrlInput, VNPAYQueryParams } from '../dtos/vnpay-input.dto';
 import { PaymentStatus, OrderModel } from '@modules/order/models';
 import { updatePaymentStatus } from '@modules/order/order.service';
 import { logAction } from '@common/services/log.service';
@@ -72,7 +72,7 @@ export const createVnpayPaymentUrl = async (
   return paymentUrl;
 };
 
-export const verifyVnpayReturn = (query: any): boolean => {
+export const verifyVnpayReturn = (query: VNPAYQueryParams): boolean => {
   const receivedSecureHash = query.vnp_SecureHash;
   delete query.vnp_SecureHash;
   delete query.vnp_SecureHashType;
@@ -90,7 +90,7 @@ export const verifyVnpayReturn = (query: any): boolean => {
 };
 
 
-export const handleVnpayReturn = async (query: any) => {
+export const handleVnpayReturn = async (query: VNPAYQueryParams) => {
   const isValid = verifyVnpayReturn({ ...query });
   if (!isValid) throw new Error('Invalid VNPAY signature');
 
@@ -121,7 +121,7 @@ export const handleVnpayReturn = async (query: any) => {
 };
 
 
-export const handleVnpayIpn = async (query: any) => {
+export const handleVnpayIpn = async (query: VNPAYQueryParams) => {
   const isValid = verifyVnpayReturn({ ...query });
 
   if (!isValid) throw new Error('Invalid VNPAY signature');
@@ -151,8 +151,8 @@ export const handleVnpayIpn = async (query: any) => {
 };
 
 
-function sortObject(obj: Record<string, any>) {
-  const sorted: Record<string, any> = {};
+function sortObject(obj: Record<string, string>): Record<string, string> {
+  const sorted: Record<string, string> = {};
   const keys = Object.keys(obj).sort();
   for (const key of keys) {
     sorted[key] = obj[key];

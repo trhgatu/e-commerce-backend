@@ -10,7 +10,7 @@ import {
 export const getAllColors = async (
     page: number,
     limit: number,
-    filters: Record<string, any> = {},
+    filters: Record<string, unknown> = {},
     sort: Record<string, 1 | -1> = {}
 ) => {
     const cacheKey = `colors:page=${page}:limit=${limit}:filters=${JSON.stringify(filters)}:sort=${JSON.stringify(sort)}`;

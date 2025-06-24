@@ -10,10 +10,10 @@ import {
 export const getAllCategories = async (
   page: number,
   limit: number,
-  filters: Record<string, any> = {},
+  filters: Record<string, unknown> = {},
   sort: Record<string, 1 | -1> = {}
 ) => {
-  const finalFilters: Record<string, any> = {
+  const finalFilters: Record<string, unknown> = {
     isDeleted: false,
     ...filters,
   }
@@ -130,22 +130,4 @@ export const restoreCategory = async (id: string): Promise<ICategory | null> => 
   return restored;
 };
 
-export const getCategoryTree = async (): Promise<any[]> => {
-  const cacheKey = `categories:tree`;
-  const cached = await getCache<any[]>(cacheKey);
-  if (cached) return cached;
-
-  const categories = await CategoryModel.find({ parentId: null }).populate({
-    path: 'children',
-    model: 'Category',
-    populate: {
-      path: 'children',
-      model: 'Category'
-    }
-  }).lean();
-
-  await setCache(cacheKey, categories, 1800);
-
-  return categories;
-};
 

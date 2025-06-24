@@ -1,6 +1,6 @@
 import { Model, PopulateOptions } from 'mongoose';
 
-type Query = Record<string, any>;
+type Query = Record<string, unknown>;
 type Sort = Record<string, 1 | -1>;
 
 export interface PaginationParams {
@@ -34,11 +34,17 @@ export const paginate = async <T>(
 
     if (populate) {
       if (Array.isArray(populate)) {
-        populate.forEach((p) => {
-          dbQuery = dbQuery.populate(p as any);
+        populate.forEach((p: PopulateOptions | string) => {
+          if (typeof p === 'string') {
+            dbQuery = dbQuery.populate({ path: p });
+          } else {
+            dbQuery = dbQuery.populate(p);
+          }
         });
       } else {
-        dbQuery = dbQuery.populate(populate as any);
+        dbQuery = typeof populate === 'string'
+          ? dbQuery.populate({ path: populate })
+          : dbQuery.populate(populate as PopulateOptions);
       }
     }
 

@@ -88,7 +88,7 @@ const controller = {
         return;
       }
 
-      let userData = parsed.data;
+      const userData = parsed.data;
       if (!userData) {
         res.status(400).json({
           success: false,

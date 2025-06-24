@@ -22,10 +22,10 @@ import { NotificationType } from '@modules/notification/notification.model';
 export const getAllOrders = async (
     page: number,
     limit: number,
-    filters: Record<string, any> = {},
+    filters: Record<string, unknown> = {},
     sort: Record<string, 1 | -1> = {}
 ) => {
-    const finalFilters: Record<string, any> = {
+    const finalFilters: Record<string, unknown> = {
         isDeleted: false,
         ...filters,
     };
