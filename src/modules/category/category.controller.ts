@@ -183,21 +183,6 @@ const controller = {
       handleError(res, error, 'Failed to restore category', 400);
     }
   },
-
-  // Get category tree (nested structure)
-  getCategoryTree: async (req: Request, res: Response) => {
-    try {
-      const categoryTree = await categoryService.getCategoryTree();
-      res.status(200).json({
-        success: true,
-        code: 200,
-        message: 'Category tree fetched successfully',
-        data: categoryTree,
-      });
-    } catch (error) {
-      handleError(res, error, 'Failed to fetch category tree', 400);
-    }
-  },
 };
 
 export default controller;

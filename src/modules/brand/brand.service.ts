@@ -10,7 +10,7 @@ import {
 export const getAllBrands = async (
   page: number,
   limit: number,
-  filters: Record<string, any> = {},
+  filters: Record<string, unknown> = {},
   sort: Record<string, 1 | -1> = {}
 ) => {
   const finalFilters = {

@@ -5,7 +5,7 @@ export const uploadImageToSupabase = async (fileBuffer: Buffer, mimetype: string
   const extension = mimetype.split('/')[1];
   const fileName = `${uuidv4()}.${extension}`;
 
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from('product-images')
     .upload(fileName, fileBuffer, {
       contentType: mimetype,

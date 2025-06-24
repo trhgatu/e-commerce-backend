@@ -4,7 +4,6 @@ import { createServer } from 'http';
 import { connectMongoDB } from './config/database';
 import { initSocketServer } from '@socket';
 import dotenv from 'dotenv';
-import bodyParser from "body-parser";
 import cors from 'cors';
 import applyRoutes from '@routes/index.route'
 import cookieParser from 'cookie-parser';

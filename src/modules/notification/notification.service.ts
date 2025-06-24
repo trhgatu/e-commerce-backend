@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import NotificationModel, { INotification, NotificationType } from './notification.model';
 import { emitNotification } from '@socket/notification.handler';
 import { paginate } from '@common/utils';
@@ -15,7 +14,7 @@ export const getAllNotifications = async (
   userId: string,
   page: number,
   limit: number,
-  filters: Record<string, any> = {},
+  filters: Record<string, unknown> = {},
   sort: Record<string, 1 | -1> = {}
 ) => {
   const finalFilters = {
@@ -95,7 +94,7 @@ export const createAndEmitNotification = async (
     title: string;
     content: string;
     type: NotificationType;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }
 ): Promise<INotification> => {
   const notif = new NotificationModel({

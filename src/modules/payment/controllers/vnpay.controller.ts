@@ -6,6 +6,7 @@ import {
 } from '../services/vnpay.service';
 import { VnpayCreateUrlInput } from '../dtos/vnpay-input.dto';
 import { handleError } from '@common/utils';
+import { VNPAYQueryParams } from '../dtos/vnpay-input.dto';
 
 const vnpayController = {
     createPaymentUrl: async (req: Request, res: Response) => {
@@ -31,7 +32,8 @@ const vnpayController = {
 
     handleReturnUrl: async (req: Request, res: Response) => {
         try {
-            const result = await handleVnpayReturn(req.query);
+            const query = req.query as VNPAYQueryParams;
+            const result = await handleVnpayReturn(query);
             res.status(200).json({ success: true, ...result });
         } catch (error) {
             handleError(res, error, 'Failed to verify VNPAY return URL', 400);
@@ -39,14 +41,15 @@ const vnpayController = {
     },
 
     handleIpnUrl: async (req: Request, res: Response) => {
-        try {
-            await handleVnpayIpn(req.query);
-            res.status(200).send('IPN received');
-        } catch (error) {
-            console.error('[VNPAY IPN error]', error);
-            res.status(400).send('IPN failed');
-        }
+    try {
+        const query = req.query as VNPAYQueryParams;
+        await handleVnpayIpn(query);
+        res.status(200).send('IPN received');
+    } catch (error) {
+        console.error('[VNPAY IPN error]', error);
+        res.status(400).send('IPN failed');
     }
+}
 };
 
 export default vnpayController;

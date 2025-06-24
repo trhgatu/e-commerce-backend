@@ -1,6 +1,6 @@
 import express from 'express';
 import controller from './log.controller';
-import { protect } from '@middlewares';
+/* import { protect } from '@middlewares'; */
 
 const router = express.Router();
 

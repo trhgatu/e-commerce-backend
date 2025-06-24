@@ -14,7 +14,7 @@ export interface INotification extends Document {
   isGlobal: boolean;
   title: string;
   content: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   type: NotificationType;
   isRead: boolean;
   createdAt: Date;

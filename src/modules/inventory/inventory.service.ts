@@ -23,7 +23,7 @@ const updateTotalStock = async (productId: string) => {
 export const getAllInventories = async (
   page: number,
   limit: number,
-  filters: Record<string, any> = {},
+  filters: Record<string, unknown> = {},
   sort: Record<string, 1 | -1> = {}
 ) => {
   const cacheKey = `inventories:page=${page}:limit=${limit}:filters=${JSON.stringify(filters)}:sort=${JSON.stringify(sort)}`;

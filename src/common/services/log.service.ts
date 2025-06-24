@@ -11,7 +11,7 @@ import {
 export const getAllLogs = async (
     page: number,
     limit: number,
-    filters: Record<string, any> = {},
+    filters: Record<string, unknown> = {},
     sort: Record<string, 1 | -1> = { createdAt: -1 }
 ) => {
     const finalFilters = { ...filters };
@@ -64,7 +64,7 @@ export const logAction = async ({
     targetId: string;
     action: LogAction;
     description: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }): Promise<ILog> => {
     const log = new LogModel({
         userId,

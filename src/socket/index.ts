@@ -18,7 +18,7 @@ export const initSocketServer = (server: http.Server) => {
 
     // future: socket.use(authSocketMiddleware);
 
-    registerNotificationHandler(socket);
+    registerNotificationHandler();
   });
 
   return io;
