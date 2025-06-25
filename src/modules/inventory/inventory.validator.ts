@@ -8,6 +8,8 @@ export const createInventorySchema = z.object({
     (val) => !val || mongoose.isValidObjectId(val),
     { message: 'Invalid colorId' }
   ),
+  minQuantity: z.number().int().min(0, { message: 'Min quantity must be >= 0' }).optional(),
+  maxQuantity: z.number().int().min(0, { message: 'Max quantity must be >= 0' }).optional(),
   size: z.string().optional(),
   quantity: z.number().int().min(0, { message: 'Quantity must be >= 0' })
 });

@@ -10,6 +10,9 @@ import {
   deleteKeysByPattern
 } from '@shared/services/redis.service';
 
+import { validateInventoryQuantity } from './utils/validate-inventory-quantity';
+
+
 const updateTotalStock = async (productId: string) => {
   const result = await Inventory.aggregate([
     { $match: { productId: new mongoose.Types.ObjectId(productId) } },
@@ -60,6 +63,7 @@ export const getInventoryById = async (id: string): Promise<IInventory | null> =
 };
 
 export const createInventory = async (data: Partial<IInventory>): Promise<IInventory> => {
+  validateInventoryQuantity(data.quantity ?? 0, data);
   const inventory = new Inventory(data);
   const saved = await inventory.save();
 
@@ -72,6 +76,12 @@ export const updateInventory = async (
   id: string,
   data: Partial<IInventory>
 ): Promise<IInventory | null> => {
+  const old = await Inventory.findById(id);
+  if (!old) throw new Error('Inventory not found');
+
+  const newQuantity = data.quantity ?? old.quantity;
+  validateInventoryQuantity(newQuantity, { ...old.toObject(), ...data });
+
   const updated = await Inventory.findByIdAndUpdate(id, data, { new: true });
 
   if (updated) {
@@ -117,36 +127,36 @@ export const increaseInventoryQuantity = async (
   id: string,
   amount: number
 ): Promise<IInventory | null> => {
-  const updated = await Inventory.findByIdAndUpdate(
-    id,
-    { $inc: { quantity: amount } },
-    { new: true }
-  );
+  const inventory = await Inventory.findById(id);
+  if (!inventory) throw new Error('Inventory not found');
 
-  if (updated) {
-    await updateTotalStock(updated.productId.toString());
-    await deleteCache(`inventory:${id}`);
-    await deleteKeysByPattern('inventories:*');
-  }
+  const newQuantity = inventory.quantity + amount;
+  validateInventoryQuantity(newQuantity, inventory);
 
-  return updated?.toObject() || null;
+  inventory.quantity = newQuantity;
+  const updated = await inventory.save();
+
+  await updateTotalStock(updated.productId.toString());
+  await deleteCache(`inventory:${id}`);
+  await deleteKeysByPattern('inventories:*');
+  return updated.toObject();
 };
 
 export const decreaseInventoryQuantity = async (
   id: string,
   amount: number
 ): Promise<IInventory | null> => {
-  const updated = await Inventory.findByIdAndUpdate(
-    id,
-    { $inc: { quantity: -amount } },
-    { new: true }
-  );
+  const inventory = await Inventory.findById(id);
+  if (!inventory) throw new Error('Inventory not found');
 
-  if (updated) {
-    await updateTotalStock(updated.productId.toString());
-    await deleteCache(`inventory:${id}`);
-    await deleteKeysByPattern('inventories:*');
-  }
+  const newQuantity = inventory.quantity - amount;
+  validateInventoryQuantity(newQuantity, inventory);
 
-  return updated?.toObject() || null;
+  inventory.quantity = newQuantity;
+  const updated = await inventory.save();
+
+  await updateTotalStock(updated.productId.toString());
+  await deleteCache(`inventory:${id}`);
+  await deleteKeysByPattern('inventories:*');
+  return updated.toObject();
 };
