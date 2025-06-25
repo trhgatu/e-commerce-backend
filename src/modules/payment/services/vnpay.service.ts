@@ -6,6 +6,7 @@ import { PaymentStatus, OrderModel } from '@modules/order/models';
 import { updatePaymentStatus } from '@modules/order/order.service';
 import { logAction } from '@common/services/log.service';
 import { LogAction } from '@common/models';
+import ProductModel from '@modules/product/product.model';
 
 const vnp_TmnCode = process.env.VNP_TMNCODE || '';
 const vnp_HashSecret = process.env.VNP_HASH_SECRET || '';
@@ -134,6 +135,17 @@ export const handleVnpayIpn = async (query: VNPAYQueryParams) => {
   const updatedOrder = await updatePaymentStatus(orderId, status, 'vnpay-ipn');
   if (!updatedOrder) throw new Error('Order not found or update failed');
 
+  if (status === PaymentStatus.PAID) {
+    const order = await OrderModel.findOne({ txnRef: orderId  }).lean();
+    if (!order) throw new Error('Order not found');
+
+    for (const item of order.items) {
+      await ProductModel.findByIdAndUpdate(
+        item.productId,
+        { $inc: { sold: item.quantity } }
+      );
+    }
+  }
   await logAction({
     userId: 'vnpay-ipn',
     targetModel: 'Payment',

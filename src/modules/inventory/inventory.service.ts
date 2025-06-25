@@ -36,12 +36,12 @@ export const getAllInventories = async (
     filters,
     sort,
     [
-      { path: 'productId', select: 'name price' },
+      { path: 'productId', select: 'name price sold' },
       { path: 'colorId', select: 'name hexCode' }
     ]
   );
 
-  await setCache(cacheKey, result, 600);
+  await setCache(cacheKey, result, 5);
   return result;
 };
 

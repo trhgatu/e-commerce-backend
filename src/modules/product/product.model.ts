@@ -24,6 +24,7 @@ export interface IProduct extends Document {
   rating: number;
   reviewCount: number;
   totalStock: number;
+  sold: number;
   hasVariants: boolean;
   availableColors?: mongoose.Types.ObjectId[];
   availableSizes?: string[];
@@ -70,6 +71,7 @@ const productSchema = new Schema<IProduct>(
     reviewCount: { type: Number, default: 0, min: 0 },
 
     totalStock: { type: Number, default: 0 },
+    sold: { type: Number, default: 0, min: 0 },
     hasVariants: { type: Boolean, default: false },
     availableColors: [
       {

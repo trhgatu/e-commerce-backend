@@ -5,6 +5,7 @@ export const baseProductSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   slug: z.string().optional(),
   totalStock: z.number().optional(),
+  sold: z.number().optional(),
   price: z.number().positive({ message: 'Price must be positive' }),
   description: z.string().optional(),
   images: z.array(z.string()).optional().default([]),
