@@ -32,4 +32,13 @@ jobs:
           tags: trhgatu/e-commerce-backend:${{ github.ref_name }}
 
       - name: 🚀 Trigger redeploy on Render
-        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_PROD }}
+          elif [[ "${{ github.ref_name }}" == "develop" ]]; then
+            curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_DEV }}
+          elif [[ "${{ github.ref_name }}" == "staging" ]]; then
+            curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_STAGING }}
+          else
+            echo "No Render webhook configured for this branch."
+          fi
