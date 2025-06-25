@@ -4,9 +4,12 @@ export interface IInventory extends Document {
   productId: mongoose.Types.ObjectId;
   colorId?: mongoose.Types.ObjectId;
   size?: string;
+  minQuantity?: number;
+  maxQuantity?: number;
   quantity: number;
   createdAt: Date;
   updatedAt: Date;
+  isDeleted?: boolean;
 }
 
 const inventorySchema = new Schema<IInventory>(
@@ -32,6 +35,20 @@ const inventorySchema = new Schema<IInventory>(
       default: 0,
       min: 0,
     },
+    minQuantity: {
+      type: Number,
+      required: false,
+      default: 0,
+      min: 0,
+    },
+    maxQuantity: {
+      type: Number,
+      required: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );
