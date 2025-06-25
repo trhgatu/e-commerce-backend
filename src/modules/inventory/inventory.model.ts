@@ -9,6 +9,7 @@ export interface IInventory extends Document {
   quantity: number;
   createdAt: Date;
   updatedAt: Date;
+  isDeleted?: boolean;
 }
 
 const inventorySchema = new Schema<IInventory>(
@@ -44,6 +45,10 @@ const inventorySchema = new Schema<IInventory>(
       type: Number,
       required: false,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );
