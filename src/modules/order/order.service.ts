@@ -77,11 +77,14 @@ export const createOrder = async (
 
         for (const item of mergedItems) {
             const inventory = await InventoryModel.findById(item.inventoryId)
-                .populate<{ productId: IProduct }>('productId')
+                .populate<{ productId: IProduct }>({
+                    path: 'productId',
+                    match: { isDeleted: false },
+                })
                 .session(session);
 
-            if (!inventory || inventory.quantity < item.quantity) {
-                throw new Error(`Không đủ tồn kho cho sản phẩm ${item.productId}`);
+            if (!inventory || !inventory.productId || inventory.quantity < item.quantity) {
+                throw new Error(`Sản phẩm không tồn tại hoặc không đủ tồn kho.`);
             }
 
             const product = inventory.productId;
