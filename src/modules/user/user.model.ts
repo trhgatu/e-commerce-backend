@@ -59,9 +59,6 @@ const userSchema: Schema<IUser> = new Schema(
     roleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
     emailVerified: { type: Boolean, default: false },
     lastLoginAt: { type: Date },
-
-    membershipRankId: { type: mongoose.Schema.Types.ObjectId, ref: 'Rank' },
-    rewardPoints: { type: Number, default: 0 },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
