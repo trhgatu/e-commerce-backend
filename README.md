@@ -1,68 +1,91 @@
-# 🛠️ E-Commerce Backend (Node.js + TypeScript + MongoDB)
+# 🛠️ E-Commerce Backend – Modular, Scalable, Production-Ready
 
-[![Deploy to Render](https://img.shields.io/badge/render-live-success?logo=render&style=flat-square)](https://render.com)
+[![Render](https://img.shields.io/badge/render-live-success?logo=render&style=flat-square)](https://e-commerce-backend-develop.onrender.com/api-docs)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/code-typescript-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/node.js-18+-brightgreen?style=flat-square&logo=node.js)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/mongoDB-atlas-success?style=flat-square&logo=mongodb)](https://www.mongodb.com/atlas)
-[![Swagger](https://img.shields.io/badge/docs-swagger-yellow?style=flat-square&logo=swagger)](http://localhost:5000/api-docs)
+[![Swagger](https://img.shields.io/badge/docs-swagger-yellow?style=flat-square&logo=swagger)](https://e-commerce-backend-develop.onrender.com/api-docs)
 
-A scalable, production-ready backend system for modern e-commerce platforms – built with **Express**, **TypeScript**, **MongoDB**, **Redis**, **JWT**, **Zod**, and **Swagger**. Designed with **modular architecture** for flexibility and long-term maintainability.
+> A backend system for modern e-commerce platforms, built with **Node.js**, **TypeScript**, **MongoDB**, **Redis**, **Zod**, and **Swagger**, following **modular architecture** for long-term scalability.
 
 ---
 
 ## 🚀 Features
 
-- 🔐 **Authentication** – JWT-based login & register
-- 🔑 **RBAC** – Role & permission management
-- 🧾 **Order & Cart** – Checkout flow with VNPAY integration (IPN supported)
-- 📦 **Inventory & Products** – Full CRUD with soft delete/restore
-- 🎨 **Brand / Category / Color** modules
-- 🧠 **Zod validation** – Input validation before hitting business logic
-- ⚡ **Redis caching** – Boost performance for read-heavy operations
-- ☁️ **Image upload** – Integrated with Supabase Storage
-- 📊 **Admin logs** – Audit trail for user actions via middleware
-- 📘 **Swagger Docs** – Auto-generated & synced per module
+- 🔐 JWT Authentication with refresh token
+- 🧑‍⚖️ RBAC – Role & Permission-based access
+- 📦 Inventory-aware Cart & Order management
+- 💰 Payment via **VNPAY** (IPN webhook supported)
+- 🏷️ Voucher support & discount logic
+- ☁️ Image uploads via **Supabase Storage**
+- ⚡ Redis caching for performance
+- 🔎 Full Swagger API documentation
+- 🧾 Audit logs via middleware
 
 ---
 
-## 🧱 Tech Stack
+## ⚙️ Tech Stack
 
-- **Express** + **TypeScript**
-- **MongoDB** with **Mongoose**
-- **Redis** (cache layer)
-- **Zod** (validation)
-- **JWT** (auth)
-- **Swagger** (API docs)
-- **Supabase** (file storage)
-- **Modular Architecture** 🧩
+| Layer         | Technology                          |
+|---------------|--------------------------------------|
+| Language      | Node.js (v18+) + TypeScript         |
+| Framework     | Express.js                          |
+| Database      | MongoDB (Mongoose ODM)              |
+| Auth          | JWT + RBAC                          |
+| Caching       | Redis Cloud                         |
+| Validation    | Zod                                 |
+| Docs          | Swagger (OpenAPI 3.0)               |
+| Storage       | Supabase                            |
+| Deployment    | Docker + Render                     |
 
 ---
 
-## ⚙️ Getting Started
+## 🧱 Folder Structure
+
+```
+src/
+├── config/              # DB, Redis, Swagger, env
+├── routes/              # App route entrypoints
+├── middlewares/         # Auth, logger, validation, etc
+├── common/              # Utils, base models
+├── shared/              # Services: redis, upload, usecases
+├── modules/             # Feature-based modules (DDD)
+│   └── <module>/
+│       ├── controller.ts
+│       ├── service.ts
+│       ├── route.ts
+│       ├── model.ts
+│       ├── validator.ts
+│       ├── dtos/
+│       └── docs/
+├── types/               # Global type declarations
+└── server.ts            # App entry
+```
+
+---
+
+## 🧪 Development Setup
 
 ```bash
-# Clone the repo
+# Clone repo
 git clone https://github.com/trhgatu/e-commerce-backend.git
-cd trhgatu-e-commerce-backend
+cd e-commerce-backend
 
-# Install dependencies
+# Install deps
 npm install
 
-# Setup environment
+# Setup env
 cp .env.example .env
 ```
 
----
-
-## 🧪 Run in Development
+Start dev server:
 
 ```bash
-# Start dev server with hot reload
 npm run dev
 ```
 
-## 🏗️ Run in Production
+Build & run production:
 
 ```bash
 npm run build
@@ -71,93 +94,75 @@ npm start
 
 ---
 
-## 📁 Folder Structure
+## 🔐 Authentication & Security
 
-```
-src/
-├── server.ts
-├── config/              # DB, Redis, Swagger, env
-├── routes/              # Main router entrypoint
-├── middlewares/         # Auth, logging, validation
-├── common/              # Shared utils, base services/models
-├── shared/              # Services (Redis, Upload), usecases
-├── modules/             # Feature-based modules (domain-driven)
-│   └── <feature>/
-│       ├── <feature>.controller.ts
-│       ├── <feature>.service.ts
-│       ├── <feature>.route.ts
-│       ├── <feature>.model.ts
-│       ├── <feature>.validator.ts
-│       ├── docs/
-│       │   └── <feature>.swagger.ts
-│       └── dtos/
-└── types/               # Custom type declarations
-```
-
----
-
-## 🔐 Auth & Security
-
-- JWT Authentication (access & refresh)
-- Role-based access control
-- Input validation with Zod
-- Secure headers via Helmet (optional)
+- Access & Refresh token via JWT
+- Secure route middleware with `requireAuth`, `requireRole`
+- All inputs validated via `Zod`
+- Middleware logging for audit & actions
+- Redis prevents brute-force login (rate-limit ready)
 
 ---
 
 ## 💼 Major Modules
 
-- `auth`, `user`, `role`, `permission`
-- `product`, `category`, `brand`, `color`
-- `cart`, `order`, `wishlist`
-- `payment` (VNPAY + IPN webhook)
-- `inventory`, `voucher`, `address`
-- `upload-image` (Supabase)
-- `log` (admin audit trail)
-
----
-
-## 📚 API Documentation
-
-Available at:
-
-- 📎 Local: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
-  Powered by `swagger-jsdoc` & `swagger-ui-express`. Each module includes its own swagger spec inside `/docs`.
-
----
-
-## 🛠️ CI/CD & Render Deployment
-
-- 🔁 Auto-deploy on push via Render
-- 🟢 No config needed – just push code to GitHub
-- ✅ Status: LIVE — auto-builds & runs on push
+- **Core:** `auth`, `user`, `role`, `permission`, `log`
+- **Product-related:** `product`, `category`, `brand`, `color`, `inventory`
+- **Order-related:** `cart`, `order`, `voucher`, `payment (VNPAY)`
+- **UX-enhancement:** `wishlist`, `notification`, `address`, `upload-image`
 
 ---
 
 ## 🧠 Design Guidelines
 
-- ✅ All business logic handled in `services/`
-- ✅ Routes stay lean – only orchestrate controller logic
-- ✅ Input validated before hitting services
-- ✅ Redis used for list & detail caching
-- ✅ Logs created via middleware (`log.middleware.ts`)
+- Controller: thin layer to receive & respond
+- Service: business logic lives here
+- Zod Validator: input check before logic
+- Middleware: logging, access control
+- Redis: used for pagination cache, single-object cache, and invalidation by pattern
+
+---
+
+## 🛠️ CI/CD – Render Deployment
+
+- 🎯 Push to GitHub → auto build & deploy via Render
+- 🧱 Docker containerized (multi-env ready)
+- 🧩 Supports environment secrets (via Render dashboard)
+- 🔄 Auto restart on crash (PM2 inside Docker optional)
+
+---
+
+## 📘 API Documentation
+
+- Develop: [`/api-docs`](https://e-commerce-backend-develop.onrender.com/api-docs)
+- Production: [`/api-docs`](https://e-commerce-backend-prod-v1.onrender.com/api-docs)
+- Built with `swagger-jsdoc` + `swagger-ui-express`
+- Each module has `.swagger.ts` for documentation
 
 ---
 
 ## 🌍 Environment Variables
 
+<details>
+<summary>.env setup</summary>
+
 ```env
-# General
+# Server
 PORT=5000
+NODE_ENV=development
 API_URL=http://localhost:5000/api/v1
-JWT_SECRET=your_jwt_secret
+
+# MongoDB
 MONGODB_URI=mongodb://localhost:27017/ecommerce
 
-# Redis Cloud
+# Redis
 REDIS_USERNAME=default
 REDIS_HOST=your.redis.host
 REDIS_PORT=12345
 REDIS_PASSWORD=your_password
+
+# JWT
+JWT_SECRET=your_jwt_secret
 
 # Supabase
 SUPABASE_URL=https://xyz.supabase.co
@@ -167,15 +172,20 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_key
 VNP_TMNCODE=your_code
 VNP_HASH_SECRET=your_secret
 VNP_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-VNP_RETURN_URL=https://<your_ngrok_or_domain>/api/v1/payments/vnpay/return
+VNP_RETURN_URL=https://yourdomain.com/api/v1/payments/vnpay/return
 ```
+
+</details>
 
 ---
 
 ## 📜 License
 
-Licensed under [MIT](https://opensource.org/licenses/MIT) – free to use, extend, and build on.
+MIT License – feel free to fork, learn, extend, and build your own system on top of it.
 
 ---
 
-> Built by [@trhgatu](https://github.com/trhgatu) – a fullstack developer crafting meaningful systems 🌌
+## ✨ Author
+
+> Built with passion by [**@trhgatu**](https://github.com/trhgatu) –  
+> *"Coding isn't just solving problems. It's telling the world who I am."*
