@@ -7,13 +7,17 @@ const objectId = () =>
   });
 
 export const createOrderSchema = z.object({
-  items: z.array(z.object({
-    inventoryId: objectId(),
-    colorId: objectId(),
-    productId: objectId(),
-    quantity: z.number().min(1, 'Quantity must be at least 1'),
-    price: z.number().positive().optional(),
-  })).min(1, 'Order must have at least one item'),
+  items: z
+    .array(
+      z.object({
+        inventoryId: objectId(),
+        colorId: objectId(),
+        productId: objectId(),
+        quantity: z.number().min(1, 'Quantity must be at least 1'),
+        price: z.number().positive().optional(),
+      })
+    )
+    .min(1, 'Order must have at least one item'),
 
   voucherCode: z.string().optional(),
   paymentMethod: z.enum(['cod', 'momo', 'vnpay']).default('cod'),
@@ -26,5 +30,11 @@ export const createOrderSchema = z.object({
 });
 
 export const updateOrderStatusSchema = z.object({
-  status: z.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']),
+  status: z.enum([
+    'pending',
+    'processing',
+    'shipped',
+    'delivered',
+    'cancelled',
+  ]),
 });

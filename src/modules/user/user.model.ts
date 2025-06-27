@@ -5,7 +5,7 @@ export enum UserStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   BANNED = 'banned',
-  PENDING = 'pending'
+  PENDING = 'pending',
 }
 export interface UserPayload {
   _id: string;
@@ -54,7 +54,11 @@ const userSchema: Schema<IUser> = new Schema(
       default: UserStatus.ACTIVE,
       required: true,
     },
-    gender: { type: String, enum: ['male', 'female', 'other'], default: 'other' },
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other'],
+      default: 'other',
+    },
     birthDate: { type: Date },
     roleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
     emailVerified: { type: Boolean, default: false },

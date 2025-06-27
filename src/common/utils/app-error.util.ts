@@ -3,7 +3,12 @@ export class AppError extends Error {
   public isOperational: boolean;
   public cause?: unknown;
 
-  constructor(message: string, statusCode = 500, isOperational = true, cause?: unknown) {
+  constructor(
+    message: string,
+    statusCode = 500,
+    isOperational = true,
+    cause?: unknown
+  ) {
     super(message);
     Object.setPrototypeOf(this, new.target.prototype);
 

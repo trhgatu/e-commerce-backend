@@ -1,7 +1,10 @@
 import { supabase } from '@common/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-export const uploadImageToSupabase = async (fileBuffer: Buffer, mimetype: string) => {
+export const uploadImageToSupabase = async (
+  fileBuffer: Buffer,
+  mimetype: string
+) => {
   const extension = mimetype.split('/')[1];
   const fileName = `${uuidv4()}.${extension}`;
 

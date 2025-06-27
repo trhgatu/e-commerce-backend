@@ -7,13 +7,8 @@ const controller = {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const { filters, sort } = buildCommonQuery(req, ["name", "description"]);
-      const result = await roleService.getAllRoles(
-        page,
-        limit,
-        filters,
-        sort,
-      );
+      const { filters, sort } = buildCommonQuery(req, ['name', 'description']);
+      const result = await roleService.getAllRoles(page, limit, filters, sort);
 
       res.status(200).json({
         success: true,
@@ -77,7 +72,11 @@ const controller = {
       const userId = req.user?._id;
       if (!userId) throw new Error('User ID is missing from request');
       const roleData = req.body;
-      const role = await roleService.updateRole(req.params.id, roleData, userId);
+      const role = await roleService.updateRole(
+        req.params.id,
+        roleData,
+        userId
+      );
 
       if (!role) {
         res.status(404).json({
@@ -114,7 +113,7 @@ const controller = {
         success: true,
         code: 200,
         message: 'Role deleted successfully',
-        data: role
+        data: role,
       });
     } catch (error) {
       handleError(res, error, 'Failed to delete role', 400);
@@ -176,7 +175,10 @@ const controller = {
         return;
       }
 
-      const updatedRole = await roleService.assignPermissionsToRole(roleId, permissions);
+      const updatedRole = await roleService.assignPermissionsToRole(
+        roleId,
+        permissions
+      );
 
       if (!updatedRole) {
         res.status(404).json({
@@ -196,8 +198,7 @@ const controller = {
     } catch (error) {
       handleError(res, error, 'Failed to assign permissions', 400);
     }
-  }
-
+  },
 };
 
 export default controller;

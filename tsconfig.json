@@ -10,49 +10,20 @@
     "skipLibCheck": true,
     "baseUrl": "./src",
     "paths": {
-      "@config/*": [
-        "config/*"
-      ],
-      "@middlewares/*": [
-        "middlewares/*"
-      ],
-      "@middlewares": [
-        "middlewares/index.ts"
-      ],
-      "@common/*": [
-        "common/*"
-      ],
-      "@common/utils": [
-        "common/utils/index.ts"
-      ],
-      "@modules/*": [
-        "modules/*"
-      ],
-      "@routes/*": [
-        "routes/*"
-      ],
-      "@types/*": [
-        "types/*"
-      ],
-      "@shared/*": [
-        "shared/*"
-      ],
-      "@socket": [
-        "socket/index.ts"
-      ],
-      "@socket/*": [
-        "socket/*"
-      ],
-      "@usecases/*": [
-        "shared/usecases/*"
-      ]
+      "@config/*": ["config/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@middlewares": ["middlewares/index.ts"],
+      "@common/*": ["common/*"],
+      "@common/utils": ["common/utils/index.ts"],
+      "@modules/*": ["modules/*"],
+      "@routes/*": ["routes/*"],
+      "@types/*": ["types/*"],
+      "@shared/*": ["shared/*"],
+      "@socket": ["socket/index.ts"],
+      "@socket/*": ["socket/*"],
+      "@usecases/*": ["shared/usecases/*"]
     },
-    "typeRoots": [
-      "./src/types",
-      "./node_modules/@types"
-    ]
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

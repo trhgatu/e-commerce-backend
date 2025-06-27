@@ -7,12 +7,17 @@ const controller = {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const { filters, sort } = buildCommonQuery(req, ["name", "description" , "group" , "label"]);
+      const { filters, sort } = buildCommonQuery(req, [
+        'name',
+        'description',
+        'group',
+        'label',
+      ]);
       const result = await permissionService.getAllPermissions(
         page,
         limit,
         filters,
-        sort,
+        sort
       );
 
       res.status(200).json({
@@ -31,7 +36,9 @@ const controller = {
 
   getPermissionById: async (req: Request, res: Response) => {
     try {
-      const permission = await permissionService.getPermissionById(req.params.id);
+      const permission = await permissionService.getPermissionById(
+        req.params.id
+      );
       if (!permission) {
         res.status(404).json({
           success: false,
@@ -54,7 +61,8 @@ const controller = {
   createPermission: async (req: Request, res: Response) => {
     try {
       const permissionData = req.body;
-      const permission = await permissionService.createPermission(permissionData);
+      const permission =
+        await permissionService.createPermission(permissionData);
       res.status(201).json({
         success: true,
         code: 201,
@@ -68,15 +76,15 @@ const controller = {
   bulkCreatePermissions: async (req: Request, res: Response) => {
     try {
       const permissionsData = req.body;
-      const permissions = await permissionService.bulkCreatePermissions(permissionsData);
+      const permissions =
+        await permissionService.bulkCreatePermissions(permissionsData);
       res.status(201).json({
         success: true,
         code: 201,
         message: 'Permissions created successfully',
         data: permissions,
       });
-    }
-    catch (error) {
+    } catch (error) {
       handleError(res, error, 'Failed to create permissions', 400);
     }
   },
@@ -84,7 +92,10 @@ const controller = {
   updatePermission: async (req: Request, res: Response) => {
     try {
       const permissionData = req.body;
-      const permission = await permissionService.updatePermission(req.params.id, permissionData);
+      const permission = await permissionService.updatePermission(
+        req.params.id,
+        permissionData
+      );
 
       if (!permission) {
         res.status(404).json({
@@ -108,7 +119,9 @@ const controller = {
 
   hardDeletePermission: async (req: Request, res: Response) => {
     try {
-      const permission = await permissionService.hardDeletePermission(req.params.id);
+      const permission = await permissionService.hardDeletePermission(
+        req.params.id
+      );
       if (!permission) {
         res.status(404).json({
           success: false,
@@ -122,7 +135,7 @@ const controller = {
         success: true,
         code: 200,
         message: 'Permission deleted successfully',
-        data: permission
+        data: permission,
       });
     } catch (error) {
       handleError(res, error, 'Failed to delete permission', 400);
@@ -130,7 +143,9 @@ const controller = {
   },
   softDeletePermission: async (req: Request, res: Response) => {
     try {
-      const permission = await permissionService.softDeletePermission(req.params.id);
+      const permission = await permissionService.softDeletePermission(
+        req.params.id
+      );
       if (!permission) {
         res.status(404).json({
           success: false,
@@ -149,9 +164,11 @@ const controller = {
       handleError(res, error, 'Failed to delete permission', 400);
     }
   },
-  restorePermission: async (req:Request, res: Response) => {
+  restorePermission: async (req: Request, res: Response) => {
     try {
-      const permission = await permissionService.restorePermission(req.params.id);
+      const permission = await permissionService.restorePermission(
+        req.params.id
+      );
       if (!permission) {
         res.status(404).json({
           success: false,
@@ -169,7 +186,7 @@ const controller = {
     } catch (error) {
       handleError(res, error, 'Failed to restore permission', 400);
     }
-  }
+  },
 };
 
 export default controller;

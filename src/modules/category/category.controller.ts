@@ -8,7 +8,7 @@ const controller = {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const { filters, sort } = buildCommonQuery(req, ["name"]);
+      const { filters, sort } = buildCommonQuery(req, ['name']);
 
       const result = await categoryService.getAllCategories(
         page,
@@ -65,7 +65,10 @@ const controller = {
         categoryData.parentId = null;
       }
 
-      const category = await categoryService.createCategory(categoryData, userId);
+      const category = await categoryService.createCategory(
+        categoryData,
+        userId
+      );
 
       res.locals.targetId = category._id?.toString() || '';
       res.locals.description = `Created category: ${category.name}`;
@@ -87,7 +90,11 @@ const controller = {
       const userId = req.user?._id;
       if (!userId) throw new Error('User ID is missing from request');
       const categoryData = req.body;
-      const category = await categoryService.updateCategory(req.params.id, categoryData, userId);
+      const category = await categoryService.updateCategory(
+        req.params.id,
+        categoryData,
+        userId
+      );
 
       if (!category) {
         res.status(404).json({
@@ -138,7 +145,10 @@ const controller = {
     try {
       const userId = req.user?._id;
       if (!userId) throw new Error('User ID is missing from request');
-      const category = await categoryService.softDeleteCategory(req.params.id, userId);
+      const category = await categoryService.softDeleteCategory(
+        req.params.id,
+        userId
+      );
       if (!category) {
         res.status(404).json({
           success: false,
@@ -148,7 +158,7 @@ const controller = {
         return;
       }
       res.locals.targetId = category._id?.toString();
-      res.locals.description = `Deleted category: ${category.name}`
+      res.locals.description = `Deleted category: ${category.name}`;
       res.status(200).json({
         success: true,
         code: 200,
@@ -172,7 +182,7 @@ const controller = {
         return;
       }
       res.locals.targetId = category._id?.toString();
-      res.locals.description = `Restored category: ${category.name}`
+      res.locals.description = `Restored category: ${category.name}`;
 
       res.status(200).json({
         success: true,

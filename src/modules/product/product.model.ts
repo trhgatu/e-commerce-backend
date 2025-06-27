@@ -76,8 +76,8 @@ const productSchema = new Schema<IProduct>(
     availableColors: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Color'
-      }
+        ref: 'Color',
+      },
     ],
     availableSizes: [{ type: String }],
 
@@ -85,7 +85,6 @@ const productSchema = new Schema<IProduct>(
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
     deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
-
   },
   { timestamps: true }
 );

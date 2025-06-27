@@ -7,12 +7,12 @@ const controller = {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const { filters, sort } = buildCommonQuery(req, ["name", "description"]);
+      const { filters, sort } = buildCommonQuery(req, ['name', 'description']);
       const result = await productService.getAllProducts(
         page,
         limit,
         filters,
-        sort,
+        sort
       );
 
       res.status(200).json({
@@ -79,7 +79,11 @@ const controller = {
       if (!userId) throw new Error('User ID is missing from request');
 
       const productData = req.body;
-      const product = await productService.updateProduct(req.params.id, productData, userId);
+      const product = await productService.updateProduct(
+        req.params.id,
+        productData,
+        userId
+      );
 
       if (!product) {
         res.status(404).json({
@@ -119,7 +123,7 @@ const controller = {
         success: true,
         code: 200,
         message: 'Product deleted successfully',
-        data: product
+        data: product,
       });
     } catch (error) {
       handleError(res, error, 'Failed to delete product', 400);
@@ -129,7 +133,10 @@ const controller = {
     try {
       const userId = req.user?._id;
       if (!userId) throw new Error('User ID is missing from request');
-      const product = await productService.softDeleteProduct(req.params.id, userId);
+      const product = await productService.softDeleteProduct(
+        req.params.id,
+        userId
+      );
       if (!product) {
         res.status(404).json({
           success: false,
@@ -139,13 +146,13 @@ const controller = {
         return;
       }
       res.locals.targetId = product._id?.toString();
-      res.locals.description = `Deleted product: ${product.name}`
+      res.locals.description = `Deleted product: ${product.name}`;
 
       res.status(200).json({
         success: true,
         code: 200,
         message: 'Product deleted successfully',
-        data: product
+        data: product,
       });
     } catch (error) {
       handleError(res, error, 'Failed to delete product', 400);
@@ -166,7 +173,7 @@ const controller = {
         return;
       }
       res.locals.targetId = product._id?.toString();
-      res.locals.description = `Restored product: ${product.name}`
+      res.locals.description = `Restored product: ${product.name}`;
 
       res.status(200).json({
         success: true,
@@ -176,7 +183,7 @@ const controller = {
     } catch (error) {
       handleError(res, error, 'Failed to restore product', 400);
     }
-  }
+  },
 };
 
 export default controller;

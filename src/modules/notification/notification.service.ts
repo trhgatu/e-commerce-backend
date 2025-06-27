@@ -1,11 +1,14 @@
-import NotificationModel, { INotification, NotificationType } from './notification.model';
+import NotificationModel, {
+  INotification,
+  NotificationType,
+} from './notification.model';
 import { emitNotification } from '@socket/notification.handler';
 import { paginate } from '@common/utils';
 import {
   getCache,
   setCache,
   deleteCache,
-  deleteKeysByPattern
+  deleteKeysByPattern,
 } from '@shared/services/redis.service';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -80,7 +83,7 @@ export const createNotification = async (
 ): Promise<INotification> => {
   const notif = new NotificationModel({
     ...data,
-    createdBy: userId
+    createdBy: userId,
   });
   const saved = await notif.save();
 
@@ -100,7 +103,7 @@ export const createAndEmitNotification = async (
   const notif = new NotificationModel({
     ...data,
     userId,
-    createdBy: userId
+    createdBy: userId,
   });
   const saved = await notif.save();
   emitNotification(userId.toString(), data);

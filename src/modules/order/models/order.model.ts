@@ -5,20 +5,20 @@ export enum OrderStatus {
   PROCESSING = 'processing',
   SHIPPED = 'shipped',
   DELIVERED = 'delivered',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 export enum PaymentStatus {
   UNPAID = 'unpaid',
   FAILED = 'failed',
   PAID = 'paid',
-  REFUNDED = 'refunded'
+  REFUNDED = 'refunded',
 }
 
 export enum PaymentMethod {
   COD = 'cod',
   MOMO = 'momo',
-  VNPAY = 'vnpay'
+  VNPAY = 'vnpay',
 }
 export interface IOrder extends Document {
   userId: mongoose.Types.ObjectId;
@@ -58,8 +58,16 @@ const orderSchema: Schema<IOrder> = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     items: [
       {
-        inventoryId: { type: Schema.Types.ObjectId, ref: 'Inventory', required: true },
-        productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+        inventoryId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Inventory',
+          required: true,
+        },
+        productId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
         colorId: { type: Schema.Types.ObjectId, ref: 'Color' },
         size: { type: String },
         quantity: { type: Number, required: true, min: 1 },
@@ -73,7 +81,7 @@ const orderSchema: Schema<IOrder> = new Schema(
     status: {
       type: String,
       enum: Object.values(OrderStatus),
-      default: OrderStatus.PENDING
+      default: OrderStatus.PENDING,
     },
 
     note: { type: String },

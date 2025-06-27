@@ -26,7 +26,8 @@ export const paginate = async <T>(
   const skip = (page - 1) * limit;
 
   try {
-    let dbQuery = model.find(query)
+    let dbQuery = model
+      .find(query)
       .select(select)
       .sort(sort)
       .skip(skip)
@@ -42,9 +43,10 @@ export const paginate = async <T>(
           }
         });
       } else {
-        dbQuery = typeof populate === 'string'
-          ? dbQuery.populate({ path: populate })
-          : dbQuery.populate(populate as PopulateOptions);
+        dbQuery =
+          typeof populate === 'string'
+            ? dbQuery.populate({ path: populate })
+            : dbQuery.populate(populate as PopulateOptions);
       }
     }
 

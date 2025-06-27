@@ -45,7 +45,10 @@ export const createVnpayPaymentUrl = async (
     vnp_TxnRef: txnRef,
     vnp_OrderType: 'other',
     vnp_Amount: (amount * 100).toString(),
-    vnp_OrderInfo: encodeURIComponent(`Don hang ${vnp_TxnRef}`).replace(/%20/g, '+'),
+    vnp_OrderInfo: encodeURIComponent(`Don hang ${vnp_TxnRef}`).replace(
+      /%20/g,
+      '+'
+    ),
     vnp_ReturnUrl: vnp_ReturnUrl,
     vnp_IpAddr: ip,
     vnp_CreateDate: createDate,
@@ -54,9 +57,11 @@ export const createVnpayPaymentUrl = async (
 
   if (bankCode) vnp_Params['vnp_BankCode'] = bankCode;
 
-
   const sortedParams = sortObject(vnp_Params);
-  const signData = qs.stringify(sortedParams, { encode: true, format: 'RFC1738' });
+  const signData = qs.stringify(sortedParams, {
+    encode: true,
+    format: 'RFC1738',
+  });
 
   const hmac = crypto.createHmac('sha512', vnp_HashSecret.trim());
   const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
@@ -90,7 +95,6 @@ export const verifyVnpayReturn = (query: VNPAYQueryParams): boolean => {
   return receivedSecureHash === signed;
 };
 
-
 export const handleVnpayReturn = async (query: VNPAYQueryParams) => {
   const isValid = verifyVnpayReturn({ ...query });
   if (!isValid) throw new Error('Invalid VNPAY signature');
@@ -98,7 +102,8 @@ export const handleVnpayReturn = async (query: VNPAYQueryParams) => {
   const orderId = query['vnp_TxnRef'];
   const vnp_ResponseCode = query['vnp_ResponseCode'];
 
-  const status = vnp_ResponseCode === '00' ? PaymentStatus.PAID : PaymentStatus.FAILED;
+  const status =
+    vnp_ResponseCode === '00' ? PaymentStatus.PAID : PaymentStatus.FAILED;
 
   const order = await OrderModel.findOne({ txnRef: orderId });
   if (!order) throw new Error('Order not found');
@@ -115,12 +120,12 @@ export const handleVnpayReturn = async (query: VNPAYQueryParams) => {
   return {
     status: order.paymentStatus,
     orderId,
-    message: order.paymentStatus === PaymentStatus.PAID
-      ? 'Payment successful'
-      : 'Waiting for confirmation',
+    message:
+      order.paymentStatus === PaymentStatus.PAID
+        ? 'Payment successful'
+        : 'Waiting for confirmation',
   };
 };
-
 
 export const handleVnpayIpn = async (query: VNPAYQueryParams) => {
   const isValid = verifyVnpayReturn({ ...query });
@@ -130,20 +135,20 @@ export const handleVnpayIpn = async (query: VNPAYQueryParams) => {
   const orderId = query['vnp_TxnRef'];
   const vnp_ResponseCode = query['vnp_ResponseCode'];
 
-  const status = vnp_ResponseCode === '00' ? PaymentStatus.PAID : PaymentStatus.FAILED;
+  const status =
+    vnp_ResponseCode === '00' ? PaymentStatus.PAID : PaymentStatus.FAILED;
 
   const updatedOrder = await updatePaymentStatus(orderId, status, 'vnpay-ipn');
   if (!updatedOrder) throw new Error('Order not found or update failed');
 
   if (status === PaymentStatus.PAID) {
-    const order = await OrderModel.findOne({ txnRef: orderId  }).lean();
+    const order = await OrderModel.findOne({ txnRef: orderId }).lean();
     if (!order) throw new Error('Order not found');
 
     for (const item of order.items) {
-      await ProductModel.findByIdAndUpdate(
-        item.productId,
-        { $inc: { sold: item.quantity } }
-      );
+      await ProductModel.findByIdAndUpdate(item.productId, {
+        $inc: { sold: item.quantity },
+      });
     }
   }
   await logAction({
@@ -158,10 +163,12 @@ export const handleVnpayIpn = async (query: VNPAYQueryParams) => {
   return {
     status,
     orderId,
-    message: status === PaymentStatus.PAID ? 'Payment successful (IPN)' : 'Payment failed (IPN)',
+    message:
+      status === PaymentStatus.PAID
+        ? 'Payment successful (IPN)'
+        : 'Payment failed (IPN)',
   };
 };
-
 
 function sortObject(obj: Record<string, string>): Record<string, string> {
   const sorted: Record<string, string> = {};

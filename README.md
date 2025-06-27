@@ -120,8 +120,9 @@ src/
 ## 📚 API Documentation
 
 Available at:
+
 - 📎 Local: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
-Powered by `swagger-jsdoc` & `swagger-ui-express`. Each module includes its own swagger spec inside `/docs`.
+  Powered by `swagger-jsdoc` & `swagger-ui-express`. Each module includes its own swagger spec inside `/docs`.
 
 ---
 
@@ -132,7 +133,6 @@ Powered by `swagger-jsdoc` & `swagger-ui-express`. Each module includes its own 
 - ✅ Status: LIVE — auto-builds & runs on push
 
 ---
-
 
 ## 🧠 Design Guidelines
 
