@@ -9,7 +9,7 @@ const controller = {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const { filters, sort } = buildCommonQuery(req, ["name", "email"]);
+      const { filters, sort } = buildCommonQuery(req, ['name', 'email']);
       const result = await userService.getAllUsers(page, limit, filters, sort);
 
       res.status(200).json({
@@ -28,10 +28,9 @@ const controller = {
   //Can sua
   getCurrentUser: async (req: Request, res: Response) => {
     try {
-      const user = await
-        User.findById(req.user?._id)
-          .populate("roleId", "name permissions")
-          .select('-password');
+      const user = await User.findById(req.user?._id)
+        .populate('roleId', 'name permissions')
+        .select('-password');
 
       if (!user) {
         res.status(404).json({ success: false, message: 'User not found' });
@@ -45,8 +44,8 @@ const controller = {
           email: user.email,
           fullName: user.fullName,
           username: user.username,
-          roleId: user.roleId
-        }
+          roleId: user.roleId,
+        },
       });
     } catch (error) {
       console.error('Get current user error:', error);
@@ -105,7 +104,7 @@ const controller = {
         data: user,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       handleError(res, error, 'Failed to create user', 400);
     }
   },
@@ -186,7 +185,7 @@ const controller = {
     } catch (error) {
       handleError(res, error, 'Failed to delete user', 400);
     }
-  }
+  },
 };
 
 export default controller;

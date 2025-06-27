@@ -1,4 +1,4 @@
-import redisClient from "@config/redis";
+import redisClient from '@config/redis';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getCache = async <T = any>(key: string): Promise<T | null> => {
   try {

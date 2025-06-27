@@ -7,10 +7,10 @@ const router = Router();
 
 //Payment with VNPAY
 router.post(
-    '/vnpay/create-payment-url',
-    protect,
-    createLog(LogAction.UPDATE, 'Payment'),
-    controller.createPaymentUrl
+  '/vnpay/create-payment-url',
+  protect,
+  createLog(LogAction.UPDATE, 'Payment'),
+  controller.createPaymentUrl
 );
 router.get('/vnpay/return', controller.handleReturnUrl);
 

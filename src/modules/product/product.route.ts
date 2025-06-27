@@ -15,7 +15,7 @@ router.post(
   protect,
   validate(createProductSchema),
   createLog(LogAction.CREATE, 'Product'),
-  controller.createProduct,
+  controller.createProduct
 );
 
 router.put(
@@ -35,7 +35,8 @@ router.delete(
   controller.softDeleteProduct
 );
 
-router.put('/restore/:id',
+router.put(
+  '/restore/:id',
   protect,
   createLog(LogAction.RESTORE, 'Product'),
   controller.restoreProduct

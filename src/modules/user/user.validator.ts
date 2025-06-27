@@ -7,9 +7,7 @@ export const baseUserSchema = z.object({
     .min(2, 'Full name must be at least 2 characters long')
     .max(100, 'Full name must not exceed 100 characters'),
 
-  email: z
-    .string()
-    .email('Invalid email address'),
+  email: z.string().email('Invalid email address'),
 
   username: z
     .string()
@@ -21,27 +19,17 @@ export const baseUserSchema = z.object({
     .min(6, 'Password must be at least 6 characters long')
     .optional(),
 
-  role: z
-    .enum(['user', 'admin'], {
-      errorMap: () => ({ message: 'Role must be either "user" or "admin"' }),
-    }),
+  role: z.enum(['user', 'admin'], {
+    errorMap: () => ({ message: 'Role must be either "user" or "admin"' }),
+  }),
 
-  phone: z
-    .string()
-    .optional(),
+  phone: z.string().optional(),
 
-  avatarUrl: z
-    .string()
-    .url('Avatar URL must be a valid URL')
-    .optional(),
+  avatarUrl: z.string().url('Avatar URL must be a valid URL').optional(),
 
-  address: z
-    .string()
-    .optional(),
+  address: z.string().optional(),
 
-  gender: z
-    .enum(['male', 'female', 'other'])
-    .optional(),
+  gender: z.enum(['male', 'female', 'other']).optional(),
 
   /* birthDate: z
     .string()
@@ -61,9 +49,7 @@ export const baseUserSchema = z.object({
 
 // ✅ Schema for creating a new user (password is required)
 export const createUserSchema = baseUserSchema.extend({
-  password: z
-    .string()
-    .min(6, 'Password must be at least 6 characters long'),
+  password: z.string().min(6, 'Password must be at least 6 characters long'),
 });
 
 // ✅ Schema for updating a user (all fields optional)

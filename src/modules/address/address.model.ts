@@ -8,7 +8,7 @@ export interface IAddress extends Document {
   isDefault: boolean;
   createdAt: Date;
   updatedAt: Date;
-  isDeleted: boolean
+  isDeleted: boolean;
 }
 
 const addressSchema = new Schema<IAddress>(
@@ -18,7 +18,7 @@ const addressSchema = new Schema<IAddress>(
     phone: { type: String, required: true },
     addressLine: { type: String, required: true },
     isDefault: { type: Boolean, default: false },
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

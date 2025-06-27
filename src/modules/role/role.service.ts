@@ -1,6 +1,6 @@
 const isDev = process.env.NODE_ENV === 'development';
 
-import RoleModel, { IRole } from './role.model'
+import RoleModel, { IRole } from './role.model';
 
 import { paginate } from '@common/utils';
 import {
@@ -14,9 +14,8 @@ export const getAllRoles = async (
   page: number,
   limit: number,
   filters: Record<string, unknown> = {},
-  sort: Record<string, 1 | -1> = {},
+  sort: Record<string, 1 | -1> = {}
 ) => {
-
   const finalFilters: Record<string, unknown> = {
     isDeleted: false,
     ...filters,
@@ -35,9 +34,7 @@ export const getAllRoles = async (
     { page, limit },
     finalFilters,
     sort,
-    [
-      { path: 'permissions', select: 'name description group label' },
-    ]
+    [{ path: 'permissions', select: 'name description group label' }]
   );
 
   if (!isDev) {
@@ -63,14 +60,13 @@ export const getRoleById = async (id: string): Promise<IRole | null> => {
   return role;
 };
 
-
 export const createRole = async (
   data: Partial<IRole>,
   userId: string
 ): Promise<IRole> => {
   const role = new RoleModel({
     ...data,
-    createdBy: userId
+    createdBy: userId,
   });
   const saved = await role.save();
 
@@ -89,10 +85,10 @@ export const updateRole = async (
     id,
     {
       ...data,
-      updatedBy: userId
+      updatedBy: userId,
     },
-    { new: true })
-    .lean();
+    { new: true }
+  ).lean();
 
   await deleteCache(`role:${id}`);
   await deleteKeysByPattern('roles:*');
@@ -141,7 +137,7 @@ export const restoreRole = async (id: string): Promise<IRole | null> => {
 
 export const assignPermissionsToRole = async (
   roleId: string,
-  permissionIds: string[],
+  permissionIds: string[]
 ): Promise<IRole | null> => {
   const updated = await RoleModel.findByIdAndUpdate(
     roleId,
@@ -154,4 +150,4 @@ export const assignPermissionsToRole = async (
     await deleteKeysByPattern('roles:*');
   }
   return updated;
-}
+};

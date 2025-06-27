@@ -21,8 +21,16 @@ const cartSchema = new Schema<ICart>(
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     items: [
       {
-        inventoryId: { type: Schema.Types.ObjectId, ref: 'Inventory', required: true },
-        productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+        inventoryId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Inventory',
+          required: true,
+        },
+        productId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
         colorId: { type: Schema.Types.ObjectId, ref: 'Color' },
         size: { type: String },
         quantity: { type: Number, required: true, min: 1 },

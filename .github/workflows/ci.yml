@@ -24,5 +24,14 @@ jobs:
       - name: 🧹 Run linter
         run: npm run lint
 
+      - name: 🔍 TypeScript type check
+        run: npm run type-check
+
+      - name: 📝 Format check
+        run: npm run format:check
+
+      - name: 📦 Build the project
+        run: npm run build
+
       - name: 🐳 Docker build test
         run: docker build -t e-commerce-backend .

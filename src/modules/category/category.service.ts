@@ -4,7 +4,7 @@ import {
   setCache,
   getCache,
   deleteCache,
-  deleteKeysByPattern
+  deleteKeysByPattern,
 } from '@shared/services/redis.service';
 
 export const getAllCategories = async (
@@ -16,7 +16,7 @@ export const getAllCategories = async (
   const finalFilters: Record<string, unknown> = {
     isDeleted: false,
     ...filters,
-  }
+  };
   const cacheKey = `categories:page=${page}:limit=${limit}:filters=${JSON.stringify(
     finalFilters
   )}:sort=${JSON.stringify(sort)}`;
@@ -27,15 +27,16 @@ export const getAllCategories = async (
     CategoryModel,
     { page, limit },
     finalFilters,
-    sort,
+    sort
   );
 
   await setCache(cacheKey, result, 600);
   return result;
 };
 
-
-export const getCategoryById = async (id: string): Promise<ICategory | null> => {
+export const getCategoryById = async (
+  id: string
+): Promise<ICategory | null> => {
   const cacheKey = `category:${id}`;
   const cached = await getCache<ICategory>(cacheKey);
   if (cached) return cached;
@@ -45,7 +46,6 @@ export const getCategoryById = async (id: string): Promise<ICategory | null> => 
 
   return category;
 };
-
 
 export const createCategory = async (
   data: Partial<ICategory>,
@@ -63,7 +63,6 @@ export const createCategory = async (
   return saved;
 };
 
-
 export const updateCategory = async (
   id: string,
   data: Partial<ICategory>,
@@ -73,7 +72,7 @@ export const updateCategory = async (
     id,
     {
       ...data,
-      updatedBy: userId
+      updatedBy: userId,
     },
     { new: true }
   ).lean();
@@ -84,8 +83,9 @@ export const updateCategory = async (
   return updated;
 };
 
-
-export const hardDeleteCategory = async (id: string): Promise<ICategory | null> => {
+export const hardDeleteCategory = async (
+  id: string
+): Promise<ICategory | null> => {
   const deleted = await CategoryModel.findByIdAndDelete(id).lean();
 
   await deleteCache(`category:${id}`);
@@ -102,7 +102,7 @@ export const softDeleteCategory = async (
     id,
     {
       isDeleted: true,
-      deletedBy: userId
+      deletedBy: userId,
     },
     { new: true }
   ).lean();
@@ -115,7 +115,9 @@ export const softDeleteCategory = async (
   return deleted;
 };
 
-export const restoreCategory = async (id: string): Promise<ICategory | null> => {
+export const restoreCategory = async (
+  id: string
+): Promise<ICategory | null> => {
   const restored = await CategoryModel.findByIdAndUpdate(
     id,
     { isDeleted: false },
@@ -129,5 +131,3 @@ export const restoreCategory = async (id: string): Promise<ICategory | null> => 
 
   return restored;
 };
-
-

@@ -2,11 +2,11 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export enum VoucherType {
   FIXED = 'fixed',
-  PERCENTAGE = 'percentage'
+  PERCENTAGE = 'percentage',
 }
 
 export interface IVoucher extends Document {
-  _id: mongoose.Types.ObjectId
+  _id: mongoose.Types.ObjectId;
   code: string;
   type: VoucherType;
   value: number;
@@ -28,7 +28,13 @@ export interface IVoucher extends Document {
 
 const voucherSchema = new Schema<IVoucher>(
   {
-    code: { type: String, required: true, unique: true, trim: true, uppercase: true },
+    code: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      uppercase: true,
+    },
     type: { type: String, enum: Object.values(VoucherType), required: true },
     value: { type: Number, required: true },
     minOrderValue: { type: Number, default: 0 },

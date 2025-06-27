@@ -10,7 +10,7 @@ router.get('/', controller.getMyAddresses);
 
 router.post('/create', controller.createAddress);
 
-router.get('/:id', controller.getAddressById)
+router.get('/:id', controller.getAddressById);
 
 router.put('/update/:id', controller.updateAddress);
 

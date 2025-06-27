@@ -1,11 +1,10 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import slugify from 'slugify';
 
-
 export enum CategoryStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  ARCHIVED = 'archived'
+  ARCHIVED = 'archived',
 }
 
 export interface ICategory extends Document {
@@ -13,7 +12,7 @@ export interface ICategory extends Document {
   slug: string;
   parentId?: mongoose.Types.ObjectId | null;
   description?: string;
-  status: CategoryStatus,
+  status: CategoryStatus;
   icon?: string;
   isDeleted: boolean;
   createdAt?: Date;
@@ -58,6 +57,10 @@ categorySchema.pre('validate', function (next) {
   next();
 });
 
-const Category = mongoose.model<ICategory>('Category', categorySchema, 'categories');
+const Category = mongoose.model<ICategory>(
+  'Category',
+  categorySchema,
+  'categories'
+);
 
-export default Category
+export default Category;

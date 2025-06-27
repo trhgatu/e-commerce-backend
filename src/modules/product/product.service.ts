@@ -1,21 +1,20 @@
 const isDev = process.env.NODE_ENV === 'development';
 
-import ProductModel, { IProduct } from './product.model'
+import ProductModel, { IProduct } from './product.model';
 import { paginate } from '@common/utils';
 import {
   getCache,
   setCache,
   deleteCache,
-  deleteKeysByPattern
+  deleteKeysByPattern,
 } from '@shared/services/redis.service';
 
 export const getAllProducts = async (
   page: number,
   limit: number,
   filters: Record<string, unknown> = {},
-  sort: Record<string, 1 | -1> = {},
+  sort: Record<string, 1 | -1> = {}
 ) => {
-
   const finalFilters: Record<string, unknown> = {
     isDeleted: false,
     ...filters,
@@ -104,8 +103,9 @@ export const updateProduct = async (
   return updated;
 };
 
-
-export const hardDeleteProduct = async (id: string): Promise<IProduct | null> => {
+export const hardDeleteProduct = async (
+  id: string
+): Promise<IProduct | null> => {
   const deleted = await ProductModel.findByIdAndDelete(id).lean();
 
   await deleteCache(`product:${id}`);

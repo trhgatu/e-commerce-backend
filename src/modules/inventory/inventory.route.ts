@@ -2,8 +2,8 @@ import express from 'express';
 import controller from './inventory.controller';
 import { validate } from '@middlewares';
 import {
-    createInventorySchema,
-    updateInventorySchema
+  createInventorySchema,
+  updateInventorySchema,
 } from './inventory.validator';
 
 const router = express.Router();
@@ -20,9 +20,17 @@ router.get('/', controller.getAllInventories);
 
 router.get('/:id', controller.getInventoryById);
 
-router.post('/create', validate(createInventorySchema), controller.createInventory);
+router.post(
+  '/create',
+  validate(createInventorySchema),
+  controller.createInventory
+);
 
-router.put('/update/:id', validate(updateInventorySchema), controller.updateInventory);
+router.put(
+  '/update/:id',
+  validate(updateInventorySchema),
+  controller.updateInventory
+);
 
 router.delete('/delete/:id', controller.deleteInventory);
 

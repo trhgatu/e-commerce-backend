@@ -8,7 +8,8 @@ export const createLog = (action: LogAction, targetModel: string) => {
     res.on('finish', async () => {
       const isSuccessful = res.statusCode >= 200 && res.statusCode < 300;
 
-      const userId = req.user?._id?.toString() || res.locals.targetId || 'unknown';
+      const userId =
+        req.user?._id?.toString() || res.locals.targetId || 'unknown';
 
       if (isSuccessful && userId) {
         const targetId = req.params.id || res.locals.targetId || 'unknown';
@@ -18,7 +19,9 @@ export const createLog = (action: LogAction, targetModel: string) => {
           targetModel,
           targetId,
           action,
-          description: res.locals.description || `User performed ${action} on ${targetModel} ${targetId}`,
+          description:
+            res.locals.description ||
+            `User performed ${action} on ${targetModel} ${targetId}`,
           metadata: {
             method: req.method,
             url: req.originalUrl,

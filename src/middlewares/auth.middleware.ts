@@ -1,8 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import UserModel, { UserPayload } from '@modules/user/user.model';
+import { UserPayload, UserStatus } from '@modules/user/user.model';
+import { verifyAccessToken } from '@common/utils';
 
-export const protect = async (req: Request, res: Response, next: NextFunction) => {
+export const protect = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
     res.status(401).json({ message: 'Not authorized, no token' });
@@ -10,26 +14,15 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as {
-      userId: string;
-    };
-
-    const userFromDb = await UserModel.findById(decoded.userId)
-      .select('_id email fullName username roleId status')
-      .lean();
-
-    if (!userFromDb) {
-      res.status(401).json({ message: 'User not found' });
-      return;
-    }
+    const decoded = verifyAccessToken(token);
 
     const user: UserPayload = {
-      _id: userFromDb._id.toString(),
-      email: userFromDb.email,
-      fullName: userFromDb.fullName,
-      username: userFromDb.username,
-      roleId: userFromDb.roleId?.toString(),
-      status: userFromDb.status,
+      _id: decoded._id,
+      username: decoded.username,
+      roleId: decoded.roleId,
+      email: decoded.email,
+      fullName: decoded.fullName,
+      status: decoded.status as UserStatus,
     };
 
     req.user = user;

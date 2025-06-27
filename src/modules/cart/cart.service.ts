@@ -3,26 +3,20 @@ import CartModel, { ICart } from './cart.model';
 import {
   CartItemInput,
   UpdateCartItemInput,
-  RemoveFromCartInput
+  RemoveFromCartInput,
 } from './dtos/cart-input.dto';
 
 export const addToCart = async (
   userId: string,
   payload: CartItemInput
 ): Promise<ICart> => {
-  const {
-    inventoryId,
-    productId,
-    colorId,
-    size,
-    quantity = 1
-  } = payload;
+  const { inventoryId, productId, colorId, size, quantity = 1 } = payload;
 
   const cart = await CartModel.findOne({ userId });
 
   if (cart) {
-    const itemIndex = cart.items.findIndex(item =>
-      item.inventoryId.toString() === inventoryId.toString()
+    const itemIndex = cart.items.findIndex(
+      (item) => item.inventoryId.toString() === inventoryId.toString()
     );
 
     if (itemIndex > -1) {
@@ -33,7 +27,7 @@ export const addToCart = async (
         productId: new mongoose.Types.ObjectId(productId),
         colorId: colorId ? new mongoose.Types.ObjectId(colorId) : undefined,
         size,
-        quantity
+        quantity,
       });
     }
 
@@ -48,15 +42,17 @@ export const addToCart = async (
         productId: new mongoose.Types.ObjectId(productId),
         colorId: colorId ? new mongoose.Types.ObjectId(colorId) : undefined,
         size,
-        quantity
-      }
-    ]
+        quantity,
+      },
+    ],
   });
 
   return await newCart.save();
 };
 
-export const getCartByUserId = async (userId: string): Promise<ICart | null> => {
+export const getCartByUserId = async (
+  userId: string
+): Promise<ICart | null> => {
   return await CartModel.findOne({ userId, isCheckedOut: false })
     .populate('items.productId')
     .populate('items.inventoryId')
@@ -73,9 +69,9 @@ export const removeFromCart = async (
     {
       $pull: {
         items: {
-          inventoryId: new mongoose.Types.ObjectId(inventoryId)
-        }
-      }
+          inventoryId: new mongoose.Types.ObjectId(inventoryId),
+        },
+      },
     },
     { new: true }
   ).lean();
@@ -90,12 +86,12 @@ export const updateItemQuantity = async (
   const updated = await CartModel.findOneAndUpdate(
     {
       userId,
-      'items.inventoryId': new mongoose.Types.ObjectId(inventoryId)
+      'items.inventoryId': new mongoose.Types.ObjectId(inventoryId),
     },
     {
       $set: {
-        'items.$.quantity': quantity
-      }
+        'items.$.quantity': quantity,
+      },
     },
     { new: true }
   ).lean();

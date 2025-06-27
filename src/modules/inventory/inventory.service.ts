@@ -7,16 +7,15 @@ import {
   getCache,
   setCache,
   deleteCache,
-  deleteKeysByPattern
+  deleteKeysByPattern,
 } from '@shared/services/redis.service';
 
 import { validateInventoryQuantity } from './utils/validate-inventory-quantity';
 
-
 const updateTotalStock = async (productId: string) => {
   const result = await Inventory.aggregate([
     { $match: { productId: new mongoose.Types.ObjectId(productId) } },
-    { $group: { _id: null, total: { $sum: '$quantity' } } }
+    { $group: { _id: null, total: { $sum: '$quantity' } } },
   ]);
 
   const totalStock = result[0]?.total || 0;
@@ -40,7 +39,7 @@ export const getAllInventories = async (
     sort,
     [
       { path: 'productId', select: 'name price sold' },
-      { path: 'colorId', select: 'name hexCode' }
+      { path: 'colorId', select: 'name hexCode' },
     ]
   );
 
@@ -48,7 +47,9 @@ export const getAllInventories = async (
   return result;
 };
 
-export const getInventoryById = async (id: string): Promise<IInventory | null> => {
+export const getInventoryById = async (
+  id: string
+): Promise<IInventory | null> => {
   const cacheKey = `inventory:${id}`;
   const cached = await getCache<IInventory>(cacheKey);
   if (cached) return cached;
@@ -62,7 +63,9 @@ export const getInventoryById = async (id: string): Promise<IInventory | null> =
   return inventory;
 };
 
-export const createInventory = async (data: Partial<IInventory>): Promise<IInventory> => {
+export const createInventory = async (
+  data: Partial<IInventory>
+): Promise<IInventory> => {
   validateInventoryQuantity(data.quantity ?? 0, data);
   const inventory = new Inventory(data);
   const saved = await inventory.save();
@@ -93,7 +96,9 @@ export const updateInventory = async (
   return updated?.toObject() || null;
 };
 
-export const deleteInventory = async (id: string): Promise<IInventory | null> => {
+export const deleteInventory = async (
+  id: string
+): Promise<IInventory | null> => {
   const deleted = await Inventory.findByIdAndDelete(id);
 
   if (deleted) {
@@ -105,7 +110,9 @@ export const deleteInventory = async (id: string): Promise<IInventory | null> =>
   return deleted?.toObject() || null;
 };
 
-export const getInventoriesByProductId = async (productId: string): Promise<IInventory[]> => {
+export const getInventoriesByProductId = async (
+  productId: string
+): Promise<IInventory[]> => {
   return await Inventory.find({ productId })
     .populate('colorId', 'name hexCode')
     .sort({ size: 1 })
@@ -117,7 +124,7 @@ export const getInventorySummaryByProductId = async (
 ): Promise<{ totalStock: number }> => {
   const result = await Inventory.aggregate([
     { $match: { productId: new mongoose.Types.ObjectId(productId) } },
-    { $group: { _id: null, total: { $sum: '$quantity' } } }
+    { $group: { _id: null, total: { $sum: '$quantity' } } },
   ]);
 
   return { totalStock: result[0]?.total || 0 };

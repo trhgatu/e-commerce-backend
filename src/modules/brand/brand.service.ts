@@ -4,7 +4,7 @@ import {
   setCache,
   deleteCache,
   deleteKeysByPattern,
-  getCache
+  getCache,
 } from '@shared/services/redis.service';
 
 export const getAllBrands = async (
@@ -15,8 +15,8 @@ export const getAllBrands = async (
 ) => {
   const finalFilters = {
     isDeleted: false,
-    ...filters
-  }
+    ...filters,
+  };
   const cacheKey = `brands:page=${page}:limit=${limit}:filters=${JSON.stringify(finalFilters)}:sort=${JSON.stringify(sort)}`;
   const cached = await getCache(cacheKey);
 
@@ -51,7 +51,7 @@ export const createBrand = async (
 ): Promise<IBrand> => {
   const brand = new BrandModel({
     ...data,
-    createdBy: userId
+    createdBy: userId,
   });
   const saved = await brand.save();
 
@@ -69,7 +69,7 @@ export const updateBrand = async (
     id,
     {
       ...data,
-      updatedBy: userId
+      updatedBy: userId,
     },
     { new: true }
   ).lean();

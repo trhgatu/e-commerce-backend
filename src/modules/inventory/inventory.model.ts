@@ -48,7 +48,7 @@ const inventorySchema = new Schema<IInventory>(
     isDeleted: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   { timestamps: true }
 );
@@ -58,6 +58,9 @@ inventorySchema.index(
   { unique: true, sparse: true }
 );
 
-
-const Inventory = mongoose.model<IInventory>('Inventory', inventorySchema, 'inventories');
+const Inventory = mongoose.model<IInventory>(
+  'Inventory',
+  inventorySchema,
+  'inventories'
+);
 export default Inventory;
